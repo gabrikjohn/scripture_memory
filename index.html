@@ -1,0 +1,2286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#5a3c15" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Memory Codex" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Scripture Memory Codex</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f0e7;
+      --surface: #fffdf7;
+      --surface-2: #ebe5d9;
+      --ink: #17201b;
+      --muted: #667068;
+      --line: #d9d2c5;
+      --accent: #2f5c46;
+      --accent-strong: #244838;
+      --accent-soft: #dce9e0;
+      --gold: #967331;
+      --danger: #8b2e2e;
+      --warning: #8a5f16;
+      --shadow: 0 12px 34px rgba(32, 42, 35, .10);
+      --radius: 18px;
+      --nav-height: 76px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #111713;
+        --surface: #18201b;
+        --surface-2: #222c25;
+        --ink: #f1eee5;
+        --muted: #abb5ad;
+        --line: #364139;
+        --accent: #7fb393;
+        --accent-strong: #9cc8aa;
+        --accent-soft: #263c2e;
+        --gold: #d0ae68;
+        --danger: #ef8e8e;
+        --warning: #e7bd6e;
+        --shadow: 0 12px 34px rgba(0, 0, 0, .24);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #111713;
+      --surface: #18201b;
+      --surface-2: #222c25;
+      --ink: #f1eee5;
+      --muted: #abb5ad;
+      --line: #364139;
+      --accent: #7fb393;
+      --accent-strong: #9cc8aa;
+      --accent-soft: #263c2e;
+      --gold: #d0ae68;
+      --danger: #ef8e8e;
+      --warning: #e7bd6e;
+      --shadow: 0 12px 34px rgba(0, 0, 0, .24);
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 52%, transparent), transparent 38%),
+        var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { color: inherit; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2, h3 { letter-spacing: -.025em; }
+    a { color: var(--accent); }
+    .hidden { display: none !important; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    .app-shell { min-height: 100vh; }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between;
+      min-height: 66px; padding: max(12px, env(safe-area-inset-top)) 18px 10px;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+    }
+    .brand { display: flex; gap: 11px; align-items: center; }
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 11px;
+      display: grid; place-items: center;
+      background: var(--accent); color: white; font-weight: 800; box-shadow: var(--shadow);
+    }
+    .brand-text strong { display: block; font-size: .98rem; }
+    .brand-text span { color: var(--muted); font-size: .76rem; }
+    .icon-btn {
+      width: 42px; height: 42px; border-radius: 13px; border: 1px solid var(--line);
+      background: var(--surface); display: grid; place-items: center; cursor: pointer;
+    }
+
+    main {
+      width: min(980px, 100%); margin: 0 auto;
+      padding: 22px 16px calc(var(--nav-height) + env(safe-area-inset-bottom) + 24px);
+    }
+    .view { animation: fadeIn .18s ease; }
+    @keyframes fadeIn { from { opacity: .35; transform: translateY(3px); } }
+
+    .hero {
+      display: grid; gap: 18px;
+      grid-template-columns: 1.35fr .65fr;
+      margin-bottom: 18px;
+    }
+    .hero-card, .card {
+      background: color-mix(in srgb, var(--surface) 97%, transparent);
+      border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-card { padding: 24px; overflow: hidden; position: relative; }
+    .hero-card::after {
+      content: ""; position: absolute; width: 170px; height: 170px; right: -70px; bottom: -85px;
+      border-radius: 50%; background: var(--accent-soft); opacity: .8;
+    }
+    .eyebrow {
+      color: var(--accent); text-transform: uppercase; letter-spacing: .14em;
+      font-size: .72rem; font-weight: 800; margin-bottom: 9px;
+    }
+    .hero h1 { font-family: ui-serif, Georgia, serif; font-size: clamp(1.75rem, 5vw, 2.65rem); margin-bottom: 10px; }
+    .hero p { color: var(--muted); line-height: 1.55; max-width: 58ch; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; position: relative; z-index: 2; }
+
+    .stats-card { padding: 18px; display: grid; gap: 10px; }
+    .stat-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--line);
+    }
+    .stat-row:last-child { border-bottom: 0; }
+    .stat-row strong { font-size: 1.55rem; }
+    .stat-row span { color: var(--muted); font-size: .88rem; }
+
+    .section-head {
+      display: flex; align-items: end; justify-content: space-between; gap: 12px;
+      margin: 26px 2px 12px;
+    }
+    .section-head h2 { margin: 0; font-size: 1.17rem; }
+    .section-head p { margin: 3px 0 0; color: var(--muted); font-size: .88rem; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .card { padding: 18px; }
+    .metric strong { display: block; font-size: 1.55rem; margin-bottom: 4px; }
+    .metric span { color: var(--muted); font-size: .86rem; }
+
+    .btn {
+      min-height: 44px; border: 0; border-radius: 13px; padding: 11px 16px;
+      font-weight: 750; cursor: pointer; transition: transform .12s ease, background .12s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-strong); }
+    .btn-secondary { background: var(--surface-2); border: 1px solid var(--line); }
+    .btn-ghost { background: transparent; border: 1px solid var(--line); }
+    .btn-danger { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); border: 1px solid color-mix(in srgb, var(--danger) 38%, transparent); }
+    .btn-small { min-height: 36px; padding: 8px 11px; font-size: .84rem; border-radius: 11px; }
+    .btn[disabled] { opacity: .48; cursor: not-allowed; }
+
+    .empty {
+      text-align: center; padding: 34px 22px; border: 1px dashed var(--line);
+      background: color-mix(in srgb, var(--surface) 84%, transparent); border-radius: var(--radius);
+    }
+    .empty-mark {
+      width: 58px; height: 58px; border-radius: 18px; margin: 0 auto 15px;
+      display: grid; place-items: center; background: var(--accent-soft); color: var(--accent);
+      font-weight: 900; font-size: 1.35rem;
+    }
+    .empty p { color: var(--muted); max-width: 50ch; margin-inline: auto; line-height: 1.5; }
+
+    .passage-list { display: grid; gap: 10px; }
+    .passage-card {
+      display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 15px;
+    }
+    .passage-card h3 { margin: 0 0 5px; font-family: ui-serif, Georgia, serif; font-size: 1.06rem; }
+    .meta { display: flex; flex-wrap: wrap; gap: 7px; color: var(--muted); font-size: .78rem; }
+    .badge {
+      display: inline-flex; align-items: center; min-height: 25px; padding: 4px 8px;
+      border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted);
+      font-size: .72rem; font-weight: 750;
+    }
+    .badge-accent { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
+    .card-actions { display: flex; gap: 7px; }
+
+    .toolbar {
+      display: grid; grid-template-columns: 1fr minmax(150px, 220px); gap: 10px; margin-bottom: 14px;
+    }
+    .input, textarea, select {
+      width: 100%; border: 1px solid var(--line); border-radius: 13px;
+      background: var(--surface); color: var(--ink); padding: 12px 13px; outline: none;
+    }
+    .input:focus, textarea:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+    textarea { min-height: 148px; resize: vertical; line-height: 1.55; }
+    label { display: block; font-weight: 750; font-size: .84rem; margin-bottom: 7px; }
+    .help { color: var(--muted); font-size: .77rem; line-height: 1.45; margin-top: 6px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { margin-bottom: 15px; }
+    .full { grid-column: 1 / -1; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+
+    .progress-track { height: 9px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: inherit; }
+    .ladder { display: grid; gap: 10px; }
+    .ladder-row {
+      display: grid; grid-template-columns: 32px 1fr auto; gap: 11px; align-items: center;
+      padding: 12px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line);
+    }
+    .ladder-num { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--surface); font-weight: 850; }
+    .ladder-row strong { display: block; font-size: .9rem; }
+    .ladder-row span { color: var(--muted); font-size: .76rem; }
+
+    .review-shell { max-width: 760px; margin: 0 auto; }
+    .review-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .review-progress { flex: 1; }
+    .review-card {
+      min-height: 470px; display: flex; flex-direction: column;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+      box-shadow: var(--shadow); padding: clamp(20px, 5vw, 34px);
+    }
+    .review-stage {
+      display: flex; justify-content: space-between; gap: 10px; align-items: center;
+      margin-bottom: 26px;
+    }
+    .review-stage .badge { font-size: .76rem; }
+    .reference {
+      font-family: ui-serif, Georgia, serif; text-align: center;
+      font-size: clamp(1.5rem, 6vw, 2.35rem); margin: 18px 0 22px;
+    }
+    .scripture {
+      font-family: ui-serif, Georgia, serif; font-size: clamp(1.17rem, 4vw, 1.42rem);
+      line-height: 1.75; white-space: pre-wrap; max-width: 62ch; margin: 0 auto;
+    }
+    .instruction { color: var(--muted); text-align: center; line-height: 1.55; max-width: 60ch; margin: 0 auto 18px; }
+    .memory-prompt {
+      padding: 20px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line);
+      margin: 0 auto 18px; width: 100%;
+    }
+    .memory-prompt .scripture { font-size: clamp(1rem, 3.5vw, 1.25rem); }
+    .blank {
+      display: inline-block; min-width: 3.4em; border-bottom: 2px solid var(--muted); color: transparent;
+      transform: translateY(-2px); user-select: none;
+    }
+    .first-letters { letter-spacing: .06em; word-spacing: .22em; }
+    .review-spacer { flex: 1; min-height: 22px; }
+    .review-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+    .typing-area { min-height: 180px; }
+    .compare-box { margin-top: 15px; padding: 15px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
+    .diff-good { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+    .diff-bad { background: color-mix(in srgb, var(--danger) 16%, transparent); color: var(--danger); border-radius: 4px; }
+
+    .grade-panel { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 18px; }
+    .grade-panel h3 { text-align: center; font-size: .95rem; margin-bottom: 12px; }
+    .grade-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+    .grade-btn {
+      min-height: 58px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2);
+      cursor: pointer; padding: 6px 3px; font-weight: 850;
+    }
+    .grade-btn span { display: block; color: var(--muted); font-size: .62rem; font-weight: 650; margin-top: 2px; }
+
+    .bottom-nav {
+      position: fixed; z-index: 40; left: 50%; bottom: 0; transform: translateX(-50%);
+      width: min(680px, 100%); min-height: var(--nav-height);
+      display: grid; grid-template-columns: repeat(5, 1fr); align-items: start;
+      padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+      background: color-mix(in srgb, var(--surface) 91%, transparent);
+      backdrop-filter: blur(20px); border: 1px solid var(--line); border-bottom: 0;
+      border-radius: 22px 22px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,.08);
+    }
+    .nav-btn {
+      border: 0; background: transparent; min-height: 50px; border-radius: 13px;
+      display: grid; place-items: center; align-content: center; gap: 2px; color: var(--muted);
+      cursor: pointer; font-size: .68rem; font-weight: 750;
+    }
+    .nav-btn .nav-icon { font-size: 1.15rem; line-height: 1; }
+    .nav-btn.active { background: var(--accent-soft); color: var(--accent); }
+
+    dialog {
+      width: min(620px, calc(100% - 28px)); border: 1px solid var(--line); border-radius: 20px;
+      background: var(--surface); color: var(--ink); padding: 0; box-shadow: var(--shadow);
+    }
+    dialog::backdrop { background: rgba(0,0,0,.52); backdrop-filter: blur(2px); }
+    .dialog-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { margin: 0; font-size: 1.1rem; }
+    .dialog-body { padding: 20px; max-height: 72vh; overflow-y: auto; }
+
+    .notice { padding: 13px 15px; border-radius: 13px; background: var(--accent-soft); color: var(--accent); line-height: 1.45; font-size: .84rem; }
+    .notice-warning { background: color-mix(in srgb, var(--warning) 15%, transparent); color: var(--warning); }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .setting-row:last-child { border-bottom: 0; }
+    .setting-copy strong { display: block; font-size: .92rem; }
+    .setting-copy span { display: block; color: var(--muted); font-size: .77rem; margin-top: 3px; line-height: 1.4; }
+    .setting-control { width: min(145px, 42vw); }
+
+    .toast {
+      position: fixed; z-index: 100; left: 50%; bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 18px);
+      transform: translateX(-50%) translateY(18px); opacity: 0; pointer-events: none;
+      max-width: calc(100% - 32px); padding: 12px 15px; border-radius: 12px;
+      background: var(--ink); color: var(--bg); font-weight: 750; font-size: .84rem;
+      transition: .2s ease;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 720px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .toolbar, .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .passage-card { grid-template-columns: 1fr; }
+      .card-actions { justify-content: flex-start; }
+      .review-card { min-height: 540px; }
+      .grade-grid { grid-template-columns: repeat(3, 1fr); }
+      .brand-text span { display: none; }
+    }
+
+    @media (min-width: 840px) {
+      main { padding-bottom: 34px; }
+      .bottom-nav {
+        position: sticky; top: 78px; bottom: auto; transform: none; left: auto;
+        width: min(680px, calc(100% - 32px)); margin: 0 auto 12px; border-radius: 18px;
+        border-bottom: 1px solid var(--line); padding-bottom: 8px; min-height: 64px;
+      }
+      .toast { bottom: 24px; }
+    }
+
+    /* Chapter-path additions */
+    .chapter-hero { margin-top: 18px; }
+    .chapter-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+    .chapter-heading h2, .chapter-library-head h1 { font-family: ui-serif, Georgia, serif; margin-bottom: 7px; }
+    .chapter-heading p, .chapter-library-head p { color: var(--muted); line-height: 1.5; margin-bottom: 0; }
+    .chapter-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 16px; }
+    .chapter-bar-label { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .78rem; margin-bottom: 7px; }
+    .chapter-bar-label strong { color: var(--ink); }
+    .mastery-fill { background: var(--gold); }
+    .flow-map { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 13px; border-radius: 14px; background: var(--surface-2); color: var(--muted); font-size: .78rem; }
+    .flow-map span { color: var(--ink); font-weight: 750; }
+    .flow-map b { color: var(--accent); }
+    .next-target { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; padding: 13px 14px; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); border-radius: 14px; background: var(--accent-soft); }
+    .next-target span { display: block; color: var(--accent); font-size: .7rem; text-transform: uppercase; letter-spacing: .11em; font-weight: 850; }
+    .next-target strong { display: block; margin-top: 4px; font-size: .9rem; }
+    .argument-card { margin-bottom: 16px; }
+    .argument-card h2 { margin-bottom: 14px; }
+    .argument-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+    .argument-step { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; padding: 11px; border-radius: 13px; background: var(--surface-2); }
+    .argument-step > span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--surface); color: var(--accent); font-weight: 900; }
+    .argument-step strong { font-size: .78rem; color: var(--accent); }
+    .argument-step p { margin: 2px 0 0; color: var(--muted); font-size: .78rem; line-height: 1.35; }
+    .unit-stack { display: grid; gap: 14px; }
+    .unit-card { padding: 20px; }
+    .unit-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+    .unit-head h2 { font-family: ui-serif, Georgia, serif; font-size: 1.15rem; margin: 4px 0 6px; }
+    .unit-head p { color: var(--muted); font-size: .82rem; line-height: 1.45; margin: 0; }
+    .unit-head > strong { color: var(--accent); font-size: 1.05rem; }
+    .unit-range { color: var(--accent); font-weight: 850; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; }
+    .path-list { display: grid; gap: 7px; margin-top: 13px; }
+    .path-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; min-height: 56px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 13px; background: color-mix(in srgb, var(--surface) 86%, transparent); }
+    .path-copy strong { display: block; font-size: .86rem; line-height: 1.35; }
+    .path-copy span { display: block; color: var(--muted); font-size: .72rem; margin-top: 3px; }
+    .status-dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; background: var(--surface-2); color: var(--muted); }
+    .status-ready .status-dot { background: var(--accent-soft); color: var(--accent); }
+    .status-learning .status-dot { background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold); }
+    .status-mastered .status-dot { background: var(--accent); color: white; }
+    .status-locked { opacity: .64; }
+    .lock-mark { color: var(--muted); padding: 8px; }
+    .milestone-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .milestone-card { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; }
+    .milestone-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; background: var(--accent-soft); color: var(--accent); font-weight: 900; font-size: 1.15rem; }
+    .milestone-card h3 { margin: 7px 0 3px; font-family: ui-serif, Georgia, serif; }
+    .milestone-card p { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.4; }
+    .verse-number { color: var(--accent); font-family: ui-sans-serif, sans-serif; font-size: .62em; font-weight: 850; margin-right: .28em; vertical-align: super; }
+    .verse-chunk { display: inline; }
+    .no-cue { text-align: center; color: var(--muted); font-family: ui-sans-serif, sans-serif; font-size: .95rem !important; letter-spacing: .08em; text-transform: uppercase; }
+    .progress-summary { margin-top: 16px; }
+    .activity-bars { height: 150px; display: flex; align-items: end; gap: 4px; }
+    .activity-bars > div { flex: 1; min-width: 3px; background: var(--accent); opacity: .82; border-radius: 5px 5px 2px 2px; }
+    .trouble-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .complete-card { justify-content: center; text-align: center; min-height: 470px; }
+    .complete-card h1 { font-family: ui-serif, Georgia, serif; }
+    .unlock-summary { display: grid; gap: 5px; margin: 12px auto; width: min(520px, 100%); padding: 14px; border-radius: 14px; background: var(--accent-soft); text-align: left; }
+    .unlock-summary span { color: var(--accent); text-transform: uppercase; letter-spacing: .1em; font-size: .68rem; font-weight: 850; }
+    .unlock-summary strong { font-size: .82rem; }
+
+    @media (max-width: 720px) {
+      .chapter-heading, .unit-head { display: grid; }
+      .chapter-bars, .argument-grid, .milestone-grid { grid-template-columns: 1fr; }
+      .path-row { grid-template-columns: 28px 1fr; }
+      .path-row .btn, .path-row .lock-mark { grid-column: 2; justify-self: start; }
+      .milestone-card { grid-template-columns: 42px 1fr; }
+      .milestone-card .btn, .milestone-card > .help { grid-column: 2; justify-self: start; }
+      .flow-map b { display: none; }
+      .flow-map span { padding: 4px 7px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+      .next-target { align-items: flex-start; }
+    }
+
+
+    /* Ancient codex theme */
+    :root {
+      --bg: #e7d7b6;
+      --surface: #f8efdc;
+      --surface-2: #efdfbd;
+      --ink: #2f2418;
+      --muted: #6f5a42;
+      --line: #ccb082;
+      --accent: #6a4a1f;
+      --accent-strong: #4b3211;
+      --accent-soft: #f3e2c0;
+      --gold: #b78a35;
+      --danger: #8b4038;
+      --warning: #9a6b14;
+      --shadow: 0 18px 36px rgba(69, 42, 13, .12);
+      --radius: 22px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #19120d;
+        --surface: #251b13;
+        --surface-2: #312418;
+        --ink: #f0e5cf;
+        --muted: #c4af90;
+        --line: #5c4427;
+        --accent: #d3af69;
+        --accent-strong: #e7c482;
+        --accent-soft: #3a2919;
+        --gold: #e0bd76;
+        --danger: #ec9a88;
+        --warning: #e2bd77;
+        --shadow: 0 18px 44px rgba(0, 0, 0, .34);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #19120d;
+      --surface: #251b13;
+      --surface-2: #312418;
+      --ink: #f0e5cf;
+      --muted: #c4af90;
+      --line: #5c4427;
+      --accent: #d3af69;
+      --accent-strong: #e7c482;
+      --accent-soft: #3a2919;
+      --gold: #e0bd76;
+      --danger: #ec9a88;
+      --warning: #e2bd77;
+      --shadow: 0 18px 44px rgba(0, 0, 0, .34);
+    }
+
+    body {
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+      background:
+        radial-gradient(circle at top center, rgba(255, 248, 229, .66), transparent 34%),
+        linear-gradient(180deg, rgba(130, 95, 42, .10), transparent 20%),
+        linear-gradient(180deg, #efe2c3 0%, #e6d4af 52%, #ddc698 100%);
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .20;
+      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27180%27%20height%3D%27180%27%20viewBox%3D%270%200%20180%20180%27%3E%0A%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.8%27%20numOctaves%3D%272%27%20stitchTiles%3D%27stitch%27/%3E%3C/filter%3E%0A%3Crect%20width%3D%27180%27%20height%3D%27180%27%20filter%3D%27url%28%2523n%29%27%20opacity%3D%270.16%27/%3E%0A%3Cpath%20d%3D%27M0%2038h180M0%2076h180M0%20114h180M0%20152h180%27%20stroke%3D%27%2523875f2c%27%20stroke-opacity%3D%270.08%27%20stroke-width%3D%271%27/%3E%0A%3C/svg%3E");
+      mix-blend-mode: multiply;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      box-shadow:
+        inset 0 0 0 1px rgba(112, 79, 34, .10),
+        inset 0 0 140px rgba(91, 58, 19, .13),
+        inset 0 0 240px rgba(255, 248, 231, .08);
+    }
+
+    button, input, textarea, select {
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    h1, h2, h3, .reference, .scripture, .brand-text strong {
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+      text-rendering: optimizeLegibility;
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, rgba(72, 48, 20, .96), rgba(98, 70, 35, .90));
+      color: #f8edd7;
+      border-bottom-color: rgba(234, 209, 154, .26);
+      box-shadow: 0 10px 28px rgba(37, 23, 8, .22);
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      inset: auto 22px 8px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(234, 209, 154, .55), transparent);
+      pointer-events: none;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #d9b56a, #ab7d30);
+      color: #2f1d06;
+      border: 1px solid rgba(79, 49, 14, .55);
+      box-shadow: inset 0 1px 0 rgba(255, 247, 224, .55), 0 10px 18px rgba(0,0,0,.18);
+      font-size: 1.02rem;
+      letter-spacing: .03em;
+    }
+
+    .brand-text strong {
+      font-variant: small-caps;
+      letter-spacing: .06em;
+    }
+
+    .brand-text span {
+      color: rgba(248, 237, 213, .72);
+      font-style: italic;
+    }
+
+    .icon-btn {
+      background: rgba(255, 247, 224, .10);
+      border-color: rgba(234, 209, 154, .26);
+      color: #f8edd7;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    main {
+      position: relative;
+    }
+
+    main::before {
+      content: "";
+      display: block;
+      height: 28px;
+      margin: 0 auto 18px;
+      width: min(260px, 70vw);
+      background: center / contain no-repeat url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27240%27%20height%3D%27120%27%20viewBox%3D%270%200%20240%20120%27%3E%0A%3Cpath%20d%3D%27M12%2060c22%200%2022-28%2044-28%2019%200%2018%2018%2031%2018%2013%200%2013-16%2029-16%2016%200%2015%2018%2030%2018%2017%200%2018-22%2038-22%2017%200%2017%2018%2034%2018%27%20fill%3D%27none%27%20stroke%3D%27%2523926b34%27%20stroke-opacity%3D%270.23%27%20stroke-width%3D%272.2%27%20stroke-linecap%3D%27round%27/%3E%0A%3Ccircle%20cx%3D%27120%27%20cy%3D%2760%27%20r%3D%275%27%20fill%3D%27%2523b28a43%27%20fill-opacity%3D%270.22%27/%3E%0A%3Cpath%20d%3D%27M118%2054l2-11%202%2011%2011%202-11%202-2%2011-2-11-11-2z%27%20fill%3D%27%2523b28a43%27%20fill-opacity%3D%270.22%27/%3E%0A%3C/svg%3E");
+      opacity: .9;
+    }
+
+    .hero-card, .card, .passage-card, .review-card, dialog, .path-row, .ladder-row, .memory-prompt, .compare-box, .empty, .bottom-nav {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 251, 241, .97), rgba(244, 231, 203, .95));
+      border-color: #c9ad7f;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.42);
+    }
+
+    :root[data-theme="dark"] .hero-card,
+    :root[data-theme="dark"] .card,
+    :root[data-theme="dark"] .passage-card,
+    :root[data-theme="dark"] .review-card,
+    :root[data-theme="dark"] dialog,
+    :root[data-theme="dark"] .path-row,
+    :root[data-theme="dark"] .ladder-row,
+    :root[data-theme="dark"] .memory-prompt,
+    :root[data-theme="dark"] .compare-box,
+    :root[data-theme="dark"] .empty,
+    :root[data-theme="dark"] .bottom-nav {
+      background: linear-gradient(180deg, rgba(43, 31, 20, .98), rgba(34, 24, 16, .98));
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .hero-card::before, .card::before, .passage-card::before, .review-card::before, dialog::before, .path-row::before, .ladder-row::before, .empty::before, .memory-prompt::before, .compare-box::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px solid rgba(129, 90, 35, .20);
+      border-radius: calc(var(--radius) - 8px);
+      pointer-events: none;
+    }
+
+    .hero-card::after {
+      right: -24px;
+      top: -22px;
+      bottom: auto;
+      width: 190px;
+      height: 190px;
+      background: radial-gradient(circle, rgba(183, 138, 53, .18), rgba(183, 138, 53, .07) 40%, transparent 72%);
+      opacity: .95;
+    }
+
+    .hero-card:first-child {
+      background:
+        linear-gradient(180deg, rgba(255, 249, 235, .98), rgba(244, 228, 195, .96)),
+        right top / 170px 170px no-repeat radial-gradient(circle at 78% 20%, rgba(183,138,53,.13), transparent 62%);
+    }
+
+    .hero h1, .chapter-heading h2, .chapter-library-head h1, .unit-head h2, .milestone-card h3, .complete-card h1, .section-head h2, .argument-card h2, .dialog-head h2 {
+      color: var(--ink);
+      letter-spacing: .01em;
+    }
+
+    .hero h1, .chapter-library-head h1 {
+      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .eyebrow, .unit-range, .next-target span {
+      color: var(--gold);
+      letter-spacing: .18em;
+      font-size: .69rem;
+    }
+
+    .section-head h2, .argument-card h2, .chapter-heading h2, .chapter-library-head h1, .unit-head h2 {
+      position: relative;
+      padding-bottom: .28rem;
+    }
+
+    .section-head h2::after, .argument-card h2::after, .chapter-heading h2::after, .chapter-library-head h1::after, .unit-head h2::after {
+      content: "";
+      display: block;
+      width: 92px;
+      height: 2px;
+      margin-top: 10px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .stats-card {
+      background: linear-gradient(180deg, rgba(92, 61, 25, .92), rgba(72, 47, 18, .92));
+      color: #f7ecd2;
+    }
+
+    .stats-card::before {
+      border-color: rgba(232, 207, 151, .22);
+    }
+
+    .stats-card .stat-row { border-bottom-color: rgba(232, 207, 151, .16); }
+    .stats-card .stat-row span { color: rgba(247, 236, 210, .76); }
+    .stats-card .stat-row strong { color: #fff7e9; }
+
+    .btn {
+      border-radius: 999px;
+      letter-spacing: .01em;
+      box-shadow: 0 6px 14px rgba(78, 53, 21, .08);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #82602b, #5a3c15);
+      color: #fff8eb;
+      box-shadow: inset 0 1px 0 rgba(255, 247, 224, .32), 0 8px 16px rgba(73, 47, 18, .16);
+    }
+
+    .btn-primary:hover { background: linear-gradient(180deg, #8f6a2f, #624117); }
+
+    .btn-secondary, .btn-ghost {
+      background: linear-gradient(180deg, rgba(250, 241, 220, .96), rgba(236, 220, 187, .95));
+      border: 1px solid #ccb083;
+      color: var(--ink);
+    }
+
+    .btn-danger {
+      background: color-mix(in srgb, var(--danger) 15%, rgba(255, 249, 236, .90));
+    }
+
+    .badge {
+      background: linear-gradient(180deg, rgba(250, 242, 224, .95), rgba(237, 223, 191, .95));
+      border-color: #ccb083;
+      color: var(--muted);
+    }
+
+    .badge-accent {
+      background: linear-gradient(180deg, rgba(243, 228, 196, .98), rgba(232, 211, 171, .98));
+      color: var(--accent-strong);
+      border-color: rgba(106, 74, 31, .26);
+    }
+
+    .input, textarea, select {
+      background: rgba(255, 251, 243, .76);
+      border-color: #ccb083;
+      color: var(--ink);
+      box-shadow: inset 0 1px 2px rgba(93, 61, 22, .05);
+    }
+
+    .input:focus, textarea:focus, select:focus {
+      border-color: #9c7639;
+      box-shadow: 0 0 0 3px rgba(183, 138, 53, .15);
+    }
+
+    textarea {
+      line-height: 1.7;
+    }
+
+    .empty {
+      border-style: solid;
+      padding-top: 38px;
+    }
+
+    .empty-mark {
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(183, 138, 53, .22), rgba(183, 138, 53, .10));
+      border: 1px solid rgba(106, 74, 31, .18);
+      font-family: "Palatino Linotype", Georgia, serif;
+    }
+
+    .passage-card h3, .milestone-card h3 {
+      font-variant: small-caps;
+      letter-spacing: .03em;
+    }
+
+    .progress-track {
+      background: rgba(145, 108, 52, .14);
+      border: 1px solid rgba(145, 108, 52, .15);
+      height: 10px;
+    }
+
+    .progress-fill {
+      background: linear-gradient(90deg, #6a4a1f, #ba9040);
+    }
+
+    .mastery-fill {
+      background: linear-gradient(90deg, #90703b, #d0ad66);
+    }
+
+    .flow-map, .argument-step, .next-target, .unlock-summary {
+      background: linear-gradient(180deg, rgba(250, 242, 225, .72), rgba(236, 222, 190, .72));
+      border: 1px solid rgba(129, 90, 35, .14);
+    }
+
+    .chapter-hero {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .chapter-hero::after {
+      content: "ℜ";
+      position: absolute;
+      right: 22px;
+      top: 12px;
+      font-size: clamp(4rem, 12vw, 6.8rem);
+      color: rgba(106, 74, 31, .08);
+      line-height: 1;
+      font-family: Georgia, serif;
+      z-index: -1;
+    }
+
+    .argument-step > span, .milestone-icon, .ladder-num, .status-dot {
+      background: linear-gradient(180deg, rgba(250, 241, 221, .98), rgba(235, 220, 186, .98));
+      border: 1px solid rgba(106, 74, 31, .18);
+      color: var(--accent);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .status-mastered .status-dot {
+      background: linear-gradient(180deg, #7b5a28, #5a3e15);
+      color: #fff6e5;
+      border-color: rgba(64, 39, 11, .35);
+    }
+
+    .review-card {
+      min-height: 500px;
+    }
+
+    .review-card::after {
+      content: "";
+      position: absolute;
+      left: 70px;
+      top: 18px;
+      bottom: 18px;
+      width: 1px;
+      background: rgba(160, 118, 58, .14);
+      pointer-events: none;
+    }
+
+    .reference {
+      font-variant: small-caps;
+      letter-spacing: .04em;
+    }
+
+    .scripture {
+      line-height: 1.85;
+    }
+
+    .memory-prompt .scripture {
+      text-align: left;
+    }
+
+    .blank {
+      border-bottom-color: #947140;
+    }
+
+    .grade-btn {
+      background: linear-gradient(180deg, rgba(250, 241, 220, .98), rgba(236, 221, 188, .98));
+      border-color: #ccb083;
+    }
+
+    .grade-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .bottom-nav {
+      background: linear-gradient(180deg, rgba(77, 53, 26, .96), rgba(56, 38, 18, .98));
+      border-color: rgba(233, 208, 155, .24);
+      box-shadow: 0 -12px 28px rgba(0,0,0,.18);
+    }
+
+    .bottom-nav::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px solid rgba(233, 208, 155, .12);
+      border-bottom: 0;
+      border-radius: 14px 14px 0 0;
+      pointer-events: none;
+    }
+
+    .nav-btn {
+      color: rgba(248, 237, 214, .74);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .nav-btn.active {
+      background: rgba(255, 247, 224, .10);
+      color: #fff4dd;
+    }
+
+    .nav-btn.active .nav-icon { color: var(--gold); }
+
+    .notice {
+      border: 1px solid rgba(106, 74, 31, .14);
+      background: linear-gradient(180deg, rgba(248, 238, 214, .90), rgba(240, 226, 192, .90));
+      color: var(--accent-strong);
+    }
+
+    .toast {
+      background: #3b2813;
+      color: #f8edd7;
+      border: 1px solid rgba(233, 208, 155, .18);
+    }
+
+    @media (max-width: 720px) {
+      .review-card::after { left: 48px; }
+      .hero-card::before, .card::before, .passage-card::before, .review-card::before, dialog::before, .path-row::before, .ladder-row::before, .empty::before, .memory-prompt::before, .compare-box::before { inset: 7px; }
+      main::before { height: 24px; margin-bottom: 14px; }
+    }
+
+
+    /* Deluxe artwork and immersive study enhancements */
+    .illuminated-initial {
+      display: inline-grid;
+      place-items: center;
+      min-width: .95em;
+      min-height: .95em;
+      margin-right: .08em;
+      padding: .02em .18em .06em;
+      border-radius: .18em;
+      background: linear-gradient(180deg, rgba(184, 140, 62, .30), rgba(115, 76, 23, .12));
+      border: 1px solid rgba(111, 74, 24, .24);
+      color: var(--accent-strong);
+      font-size: 1.06em;
+      line-height: 1;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .codex-splash {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) minmax(240px, .9fr);
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .codex-splash-copy h2 {
+      font-size: clamp(2rem, 6vw, 3.1rem);
+      margin: 4px 0 10px;
+      font-variant: small-caps;
+      letter-spacing: .04em;
+    }
+    .codex-splash-copy p { color: var(--muted); line-height: 1.65; max-width: 56ch; }
+    .codex-sigil-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+    .roman-scene {
+      border-radius: 18px;
+      border: 1px solid rgba(111, 74, 24, .16);
+      background: linear-gradient(180deg, rgba(255,250,240,.68), rgba(238,223,187,.55));
+      padding: 8px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+    }
+    .roman-scene svg { display: block; width: 100%; height: auto; }
+    .roman-scene.compact { max-width: 360px; margin: 14px 0 6px auto; }
+
+    .chapter-hero .roman-scene.compact,
+    .argument-card .roman-scene.compact {
+      max-width: 320px;
+    }
+
+    .argument-card .roman-scene.compact {
+      margin: 10px 0 18px auto;
+    }
+
+    body.review-mode {
+      background:
+        radial-gradient(circle at 18% 14%, rgba(255, 228, 170, .22), transparent 16%),
+        radial-gradient(circle at 82% 16%, rgba(255, 228, 170, .12), transparent 14%),
+        linear-gradient(180deg, #4b3218 0%, #322012 100%);
+    }
+    body.review-mode::before { opacity: .10; }
+    body.review-mode .topbar {
+      background: linear-gradient(180deg, rgba(41, 28, 15, .94), rgba(60, 41, 20, .94));
+    }
+    body.review-mode main::before { opacity: .45; }
+    body.review-mode .bottom-nav {
+      background: linear-gradient(180deg, rgba(45, 31, 17, .97), rgba(31, 20, 12, .98));
+    }
+
+    .review-shell {
+      position: relative;
+    }
+    .review-shell::before,
+    .review-shell::after {
+      content: "";
+      position: absolute;
+      inset: 30px auto auto -80px;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(227, 189, 108, .18), transparent 70%);
+      filter: blur(4px);
+      pointer-events: none;
+    }
+    .review-shell::after {
+      left: auto;
+      right: -70px;
+      top: 80px;
+      width: 140px;
+      height: 140px;
+      opacity: .7;
+    }
+    .scribe-banner {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(111, 74, 24, .14);
+    }
+    .scribe-banner strong {
+      display: block;
+      font-family: "Palatino Linotype", Georgia, serif;
+      font-size: 1rem;
+      font-variant: small-caps;
+      letter-spacing: .06em;
+    }
+    .scribe-banner-icons {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-size: 1.05rem;
+    }
+    .review-card {
+      background:
+        linear-gradient(180deg, rgba(252, 246, 233, .99), rgba(243, 229, 198, .97));
+    }
+    :root[data-theme="dark"] .review-card {
+      background: linear-gradient(180deg, rgba(43, 31, 20, .99), rgba(35, 24, 16, .99));
+    }
+    .review-card::before {
+      inset: 10px;
+    }
+    .review-stage { margin-bottom: 20px; }
+    .reference {
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+    .memory-prompt {
+      background: linear-gradient(180deg, rgba(252, 246, 233, .82), rgba(239, 225, 190, .78));
+    }
+    .path-row strong, .passage-card h3, .milestone-card h3, .chapter-heading h2, .chapter-library-head h1, .section-head h1 {
+      text-wrap: balance;
+    }
+    .milestone-icon {
+      font-family: "Palatino Linotype", Georgia, serif;
+    }
+
+    @media (max-width: 780px) {
+      .codex-splash { grid-template-columns: 1fr; }
+      .roman-scene.compact, .chapter-hero .roman-scene.compact, .argument-card .roman-scene.compact { max-width: none; margin-right: 0; }
+      .scribe-banner { align-items: flex-start; }
+      .review-shell::before, .review-shell::after { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">SM</div>
+        <div class="brand-text">
+          <strong>Scripture Memory Codex</strong>
+          <span>An illuminated place for deep recall.</span>
+        </div>
+      </div>
+      <button class="icon-btn" id="quickAddBtn" aria-label="Add a passage" title="Add passage">＋</button>
+    </header>
+
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <button class="nav-btn active" data-view="today"><span class="nav-icon">⌂</span><span>Today</span></button>
+      <button class="nav-btn" data-view="library"><span class="nav-icon">▤</span><span>Library</span></button>
+      <button class="nav-btn" data-view="add"><span class="nav-icon">＋</span><span>Add</span></button>
+      <button class="nav-btn" data-view="progress"><span class="nav-icon">↗</span><span>Progress</span></button>
+      <button class="nav-btn" data-view="settings"><span class="nav-icon">⚙</span><span>Settings</span></button>
+    </nav>
+
+    <main>
+      <section id="view-today" class="view"></section>
+      <section id="view-library" class="view hidden"></section>
+      <section id="view-add" class="view hidden"></section>
+      <section id="view-progress" class="view hidden"></section>
+      <section id="view-settings" class="view hidden"></section>
+      <section id="view-review" class="view hidden"></section>
+    </main>
+  </div>
+
+  <dialog id="editDialog">
+    <div class="dialog-head">
+      <h2>Edit passage</h2>
+      <button class="icon-btn" data-close-dialog="editDialog" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body" id="editDialogBody"></div>
+  </dialog>
+
+  <dialog id="importDialog">
+    <div class="dialog-head">
+      <h2>Import passage library</h2>
+      <button class="icon-btn" data-close-dialog="importDialog" aria-label="Close">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="notice notice-warning" style="margin-bottom:16px">
+        Import only text you are authorized to use. This app stores passage text on this device.
+      </div>
+      <div class="field">
+        <label for="importFile">Choose a Scripture Memory backup (.json)</label>
+        <input class="input" id="importFile" type="file" accept="application/json,.json" />
+      </div>
+      <button class="btn btn-primary" id="runImportBtn">Import backup</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  "use strict";
+
+  const STORAGE_KEY = "scripture-memory-gauntlet.v1";
+  const APP_VERSION = 3;
+  const ROMANS_CHAPTER_ID = "romans-1";
+
+  const LEVELS = {
+    1: { name: "Read", description: "Read slowly, notice the argument, and speak the words aloud." },
+    2: { name: "Fill blanks", description: "Recover omitted words from context." },
+    3: { name: "First letters", description: "Use initials as a minimal cue." },
+    4: { name: "Type", description: "Produce the wording from memory." },
+    5: { name: "Recite", description: "Recall aloud without textual help." }
+  };
+
+  const ROMANS_1_VERSES = {
+    1: "Paul, a slave of Christ Jesus, called as an apostle, having been set apart for the gospel of God,",
+    2: "which He promised beforehand through His prophets in the holy Scriptures,",
+    3: "concerning His Son, who was born of the seed of David according to the flesh,",
+    4: "who was designated as the Son of God in power, according to the Spirit of holiness, by the resurrection from the dead, Jesus Christ our Lord,",
+    5: "through whom we received grace and apostleship for the obedience of faith among all the Gentiles for the sake of His name,",
+    6: "among whom you also are the called of Jesus Christ;",
+    7: "to all who are beloved of God in Rome, called as saints: Grace to you and peace from God our Father and the Lord Jesus Christ.",
+    8: "First, I thank my God through Jesus Christ for you all, because your faith is being proclaimed throughout the whole world.",
+    9: "For God, whom I serve in my spirit in the gospel of His Son, is my witness as to how without ceasing I make mention of you,",
+    10: "always in my prayers earnestly asking, if perhaps now at last by the will of God I may succeed in coming to you.",
+    11: "For I long to see you so that I may impart some spiritual gift to you, that you may be strengthened;",
+    12: "that is, to be mutually encouraged, while among you, by each other’s faith, both yours and mine.",
+    13: "I do not want you to be unaware, brothers, that often I have planned to come to you (and have been prevented so far) so that I may have some fruit among you also, even as among the rest of the Gentiles.",
+    14: "I am under obligation both to Greeks and to barbarians, both to the wise and to the foolish.",
+    15: "In this way, for my part, I am eager to proclaim the gospel to you also who are in Rome.",
+    16: "For I am not ashamed of the gospel, for it is the power of God for salvation to everyone who believes, to the Jew first and also to the Greek.",
+    17: "For in it the righteousness of God is revealed from faith to faith; as it is written, “But the righteous will live by faith.”",
+    18: "For the wrath of God is revealed from heaven against all ungodliness and unrighteousness of men who suppress the truth in unrighteousness,",
+    19: "because that which is known about God is evident within them; for God made it evident to them.",
+    20: "For since the creation of the world His invisible attributes, both His eternal power and divine nature, have been clearly seen, being understood through what has been made, so that they are without excuse.",
+    21: "For even though they knew God, they did not glorify Him as God or give thanks, but they became futile in their thoughts, and their foolish heart was darkened.",
+    22: "Professing to be wise, they became fools,",
+    23: "and exchanged the glory of the incorruptible God for an image in the likeness of corruptible man and of birds and four-footed animals and crawling creatures.",
+    24: "Therefore God gave them over in the lusts of their hearts to impurity, so that their bodies would be dishonored among them.",
+    25: "For they exchanged the truth of God for a lie, and worshiped and served the creature rather than the Creator, who is blessed forever. Amen.",
+    26: "For this reason God gave them over to dishonorable passions; for their females exchanged the natural function for that which is unnatural,",
+    27: "and in the same way also the males abandoned the natural function of the female and burned in their desire toward one another, males with males committing indecent acts and receiving in their own persons the due penalty of their error.",
+    28: "And just as they did not see fit to acknowledge God, God gave them over to an unfit mind, to do those things which are not proper,",
+    29: "having been filled with all unrighteousness, wickedness, greed, evil; full of envy, murder, strife, deceit, malice; they are gossips,",
+    30: "slanderers, haters of God, violent, arrogant, boastful, inventors of evil, disobedient to parents,",
+    31: "without understanding, untrustworthy, unloving, unmerciful;",
+    32: "and although they know the righteous requirement of God, that those who practice such things are worthy of death, they not only do the same, but also give hearty approval to those who practice them."
+  };
+
+  const ROMANS_UNITS = [
+    { id: "r1-u1", range: "1:1–7", title: "The gospel promised and centered in God’s Son", summary: "Paul’s calling, the promised gospel, Christ’s identity, and grace to Rome." },
+    { id: "r1-u2", range: "1:8–15", title: "Paul’s gratitude, prayers, and obligation", summary: "Paul longs to strengthen the Romans and proclaim the gospel among them." },
+    { id: "r1-u3", range: "1:16–17", title: "The gospel: God’s power and righteousness", summary: "The thesis of Romans: salvation and righteousness revealed by faith." },
+    { id: "r1-u4", range: "1:18–23", title: "Wrath revealed against suppressed truth", summary: "God is known through creation, yet humanity refuses to honor Him." },
+    { id: "r1-u5", range: "1:24–25", title: "God gives them over to impurity", summary: "The truth of God is exchanged for a lie and the creature is worshiped." },
+    { id: "r1-u6", range: "1:26–27", title: "God gives them over to dishonorable passions", summary: "The second movement in Paul’s threefold ‘gave them over’ indictment." },
+    { id: "r1-u7", range: "1:28–32", title: "God gives them over to an unfit mind", summary: "The final giving over culminates in a catalogue of unrighteousness." }
+  ];
+
+  function romansText(start, end) {
+    const parts = [];
+    for (let verse = start; verse <= end; verse += 1) parts.push(ROMANS_1_VERSES[verse]);
+    return parts.join(" ");
+  }
+
+  function seedPassage(config) {
+    return {
+      id: config.id,
+      seedKey: config.id,
+      reference: config.reference || `Romans 1:${config.verseStart}${config.verseEnd !== config.verseStart ? `–${config.verseEnd}` : ""}`,
+      title: config.title,
+      text: romansText(config.verseStart, config.verseEnd),
+      collection: "Romans",
+      translation: "LSB",
+      tags: ["Romans 1", config.kind],
+      kind: config.kind,
+      chapterId: ROMANS_CHAPTER_ID,
+      unitId: config.unitId || null,
+      verseStart: config.verseStart,
+      verseEnd: config.verseEnd,
+      boundaries: config.boundaries || [],
+      order: config.order,
+      prerequisites: config.prerequisites || [],
+      level: config.startLevel || 1,
+      interval: 0,
+      dueDate: config.prerequisites?.length ? null : todayISO(),
+      unlockedAt: config.prerequisites?.length ? null : new Date().toISOString(),
+      repetitions: 0,
+      lapses: 0,
+      lastRating: null,
+      passes: 0,
+      successfulRecitations: 0,
+      troubleWords: {},
+      reviewHistory: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function romansSeed() {
+    return [
+      seedPassage({ id: "r1-01", unitId: "r1-u1", kind: "segment", verseStart: 1, verseEnd: 2, title: "Called and set apart", order: 1 }),
+      seedPassage({ id: "r1-02", unitId: "r1-u1", kind: "segment", verseStart: 3, verseEnd: 4, title: "The Son in flesh and power", order: 2, prerequisites: ["r1-01"] }),
+      seedPassage({ id: "r1-03", unitId: "r1-u1", kind: "segment", verseStart: 5, verseEnd: 6, title: "Grace and the obedience of faith", order: 3, prerequisites: ["r1-02"] }),
+      seedPassage({ id: "r1-04", unitId: "r1-u1", kind: "segment", verseStart: 7, verseEnd: 7, title: "Grace and peace to the saints", order: 4, prerequisites: ["r1-03"] }),
+      seedPassage({ id: "r1-u1-full", unitId: "r1-u1", kind: "unit", verseStart: 1, verseEnd: 7, title: "Thought-unit recitation", order: 5, startLevel: 2, boundaries: [2, 4, 6], prerequisites: ["r1-01", "r1-02", "r1-03", "r1-04"] }),
+
+      seedPassage({ id: "r1-05", unitId: "r1-u2", kind: "segment", verseStart: 8, verseEnd: 10, title: "Thanksgiving and unceasing prayer", order: 6, prerequisites: ["r1-u1-full"] }),
+      seedPassage({ id: "r1-06", unitId: "r1-u2", kind: "segment", verseStart: 11, verseEnd: 12, title: "Strengthened and mutually encouraged", order: 7, prerequisites: ["r1-05"] }),
+      seedPassage({ id: "r1-07", unitId: "r1-u2", kind: "segment", verseStart: 13, verseEnd: 15, title: "Fruit, obligation, and eagerness", order: 8, prerequisites: ["r1-06"] }),
+      seedPassage({ id: "r1-u2-full", unitId: "r1-u2", kind: "unit", verseStart: 8, verseEnd: 15, title: "Thought-unit recitation", order: 9, startLevel: 2, boundaries: [10, 12], prerequisites: ["r1-05", "r1-06", "r1-07"] }),
+      seedPassage({ id: "r1-bridge-a", kind: "bridge", verseStart: 1, verseEnd: 15, title: "Cumulative bridge: Gospel and mission", order: 10, startLevel: 3, boundaries: [7], prerequisites: ["r1-u2-full"], reference: "Romans 1:1–15" }),
+
+      seedPassage({ id: "r1-u3-full", unitId: "r1-u3", kind: "unit", verseStart: 16, verseEnd: 17, title: "The thesis of Romans", order: 11, boundaries: [16], prerequisites: ["r1-bridge-a"] }),
+      seedPassage({ id: "r1-08", unitId: "r1-u4", kind: "segment", verseStart: 18, verseEnd: 20, title: "Truth suppressed despite creation", order: 12, prerequisites: ["r1-u3-full"] }),
+      seedPassage({ id: "r1-09", unitId: "r1-u4", kind: "segment", verseStart: 21, verseEnd: 23, title: "Futile thoughts and exchanged glory", order: 13, prerequisites: ["r1-08"] }),
+      seedPassage({ id: "r1-u4-full", unitId: "r1-u4", kind: "unit", verseStart: 18, verseEnd: 23, title: "Thought-unit recitation", order: 14, startLevel: 2, boundaries: [20], prerequisites: ["r1-08", "r1-09"] }),
+      seedPassage({ id: "r1-bridge-b", kind: "bridge", verseStart: 16, verseEnd: 23, title: "Cumulative bridge: Thesis and indictment", order: 15, startLevel: 3, boundaries: [17, 20], prerequisites: ["r1-u4-full"], reference: "Romans 1:16–23" }),
+
+      seedPassage({ id: "r1-u5-full", unitId: "r1-u5", kind: "unit", verseStart: 24, verseEnd: 25, title: "The first giving over", order: 16, prerequisites: ["r1-bridge-b"] }),
+      seedPassage({ id: "r1-u6-full", unitId: "r1-u6", kind: "unit", verseStart: 26, verseEnd: 27, title: "The second giving over", order: 17, prerequisites: ["r1-u5-full"] }),
+      seedPassage({ id: "r1-10", unitId: "r1-u7", kind: "segment", verseStart: 28, verseEnd: 29, title: "An unfit mind and unrighteousness", order: 18, prerequisites: ["r1-u6-full"] }),
+      seedPassage({ id: "r1-11", unitId: "r1-u7", kind: "segment", verseStart: 30, verseEnd: 31, title: "The catalogue continues", order: 19, prerequisites: ["r1-10"] }),
+      seedPassage({ id: "r1-12", unitId: "r1-u7", kind: "segment", verseStart: 32, verseEnd: 32, title: "Practice and hearty approval", order: 20, prerequisites: ["r1-11"] }),
+      seedPassage({ id: "r1-u7-full", unitId: "r1-u7", kind: "unit", verseStart: 28, verseEnd: 32, title: "Thought-unit recitation", order: 21, startLevel: 2, boundaries: [29, 31], prerequisites: ["r1-10", "r1-11", "r1-12"] }),
+      seedPassage({ id: "r1-bridge-c", kind: "bridge", verseStart: 24, verseEnd: 32, title: "Cumulative bridge: The threefold giving over", order: 22, startLevel: 3, boundaries: [25, 27], prerequisites: ["r1-u7-full"], reference: "Romans 1:24–32" }),
+      seedPassage({ id: "r1-chapter", kind: "chapter", verseStart: 1, verseEnd: 32, title: "Whole-chapter recitation", order: 23, startLevel: 3, boundaries: [7, 15, 17, 23, 25, 27], prerequisites: ["r1-bridge-c"], reference: "Romans 1" })
+    ];
+  }
+
+  const defaultState = () => ({
+    version: APP_VERSION,
+    passages: [],
+    reviewLog: [],
+    settings: {
+      dailyNewLimit: 3,
+      clozePercent: 35,
+      theme: "system",
+      strictPunctuation: false
+    },
+    meta: { seededChapters: [] },
+    createdAt: new Date().toISOString()
+  });
+
+  let state = loadState();
+  let activeView = "today";
+  let editingId = null;
+  let reviewSession = null;
+  let toastTimer = null;
+
+  function makeId() {
+    if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") return globalThis.crypto.randomUUID();
+    return `p-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
+  function todayISO() { return dateToISO(new Date()); }
+  function dateToISO(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  function addDaysISO(days) {
+    const d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() + days);
+    return dateToISO(d);
+  }
+  function daysBetween(a, b) {
+    const one = new Date(`${a}T12:00:00`);
+    const two = new Date(`${b}T12:00:00`);
+    return Math.round((two - one) / 86400000);
+  }
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>'"]/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+    })[char]);
+  }
+  function illuminateHTML(text) {
+    const safe = escapeHTML(String(text || "").trim());
+    return safe.replace(/^(.)/, '<span class="illuminated-initial">$1</span>');
+  }
+
+  function romanSceneHTML(compact = false) {
+    return `<div class="roman-scene ${compact ? "compact" : ""}" aria-hidden="true">
+      <svg viewBox="0 0 420 230" role="presentation" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skyGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(255,244,216,.95)" />
+            <stop offset="100%" stop-color="rgba(227,191,126,.28)" />
+          </linearGradient>
+          <linearGradient id="roadGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#b1864b" />
+            <stop offset="100%" stop-color="#7d5a2e" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="420" height="230" rx="24" fill="url(#skyGrad)" opacity=".72"/>
+        <circle cx="335" cy="50" r="28" fill="#dcb46b" opacity=".42"/>
+        <path d="M18 190c34-18 62-22 97-12 28 8 58 10 90-2 36-13 58-13 98 1 24 8 60 10 99-10v40H18z" fill="#a58149" opacity=".3"/>
+        <path d="M184 228c8-54 20-93 32-114 14 20 25 60 31 114z" fill="url(#roadGrad)" opacity=".88"/>
+        <path d="M196 228c5-48 12-80 20-98 10 18 17 50 22 98z" fill="#d2b27c" opacity=".3"/>
+        <g transform="translate(132 61)">
+          <rect x="0" y="48" width="162" height="8" rx="3" fill="#8d6732" opacity=".95"/>
+          <polygon points="6,48 81,4 156,48" fill="#8a632d" opacity=".95"/>
+          <rect x="17" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
+          <rect x="50" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
+          <rect x="84" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
+          <rect x="117" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
+        </g>
+        <g transform="translate(32 20)" stroke="#8f6b34" stroke-width="3" stroke-linecap="round" fill="none" opacity=".35">
+          <path d="M45 155c-28-11-38-29-35-50 4-24 18-35 38-42"/>
+          <path d="M54 150c-24-8-33-24-31-44 2-19 14-31 31-36"/>
+          <path d="M365 155c28-11 38-29 35-50-4-24-18-35-38-42"/>
+          <path d="M356 150c24-8 33-24 31-44-2-19-14-31-31-36"/>
+        </g>
+        <circle cx="210" cy="34" r="8" fill="#b98b41" opacity=".28"/>
+      </svg>
+    </div>`;
+  }
+
+  function parseTags(value) {
+    return String(value).split(",").map(v => v.trim()).filter(Boolean).slice(0, 12);
+  }
+  function wordCount(text) { return String(text).trim().split(/\s+/).filter(Boolean).length; }
+  function normalizeWord(word) {
+    return String(word).normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}'’-]+/gu, "").toLowerCase();
+  }
+  function formatDate(iso) {
+    if (!iso) return "Locked";
+    const d = new Date(`${iso}T12:00:00`);
+    return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: d.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined }).format(d);
+  }
+  function dueLabel(iso) {
+    if (!iso) return "Locked";
+    const diff = daysBetween(todayISO(), iso);
+    if (diff < 0) return `${Math.abs(diff)}d overdue`;
+    if (diff === 0) return "Due today";
+    if (diff === 1) return "Due tomorrow";
+    return `Due in ${diff}d`;
+  }
+  function kindLabel(kind) {
+    return ({ segment: "Segment", unit: "Thought unit", bridge: "Cumulative bridge", chapter: "Chapter challenge", custom: "Custom" })[kind] || "Passage";
+  }
+  function stableHash(str) {
+    let hash = 2166136261;
+    for (let i = 0; i < str.length; i += 1) {
+      hash ^= str.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  function normalizePassage(p) {
+    const now = new Date().toISOString();
+    return {
+      id: p.id || makeId(),
+      seedKey: p.seedKey || null,
+      reference: String(p.reference || "Untitled passage").trim(),
+      title: String(p.title || "").trim(),
+      text: String(p.text || "").trim(),
+      collection: String(p.collection || "Unsorted").trim() || "Unsorted",
+      translation: String(p.translation || "LSB").trim() || "LSB",
+      tags: Array.isArray(p.tags) ? p.tags : parseTags(p.tags || ""),
+      kind: p.kind || "custom",
+      chapterId: p.chapterId || null,
+      unitId: p.unitId || null,
+      verseStart: Number.isFinite(Number(p.verseStart)) ? Number(p.verseStart) : null,
+      verseEnd: Number.isFinite(Number(p.verseEnd)) ? Number(p.verseEnd) : null,
+      boundaries: Array.isArray(p.boundaries) ? p.boundaries.map(Number).filter(Number.isFinite) : [],
+      order: Number.isFinite(Number(p.order)) ? Number(p.order) : 9999,
+      prerequisites: Array.isArray(p.prerequisites) ? p.prerequisites : [],
+      level: clamp(Number(p.level || 1), 1, 5),
+      interval: Math.max(0, Number(p.interval || 0)),
+      dueDate: p.dueDate === null ? null : (p.dueDate || todayISO()),
+      unlockedAt: p.unlockedAt || null,
+      repetitions: Math.max(0, Number(p.repetitions || 0)),
+      lapses: Math.max(0, Number(p.lapses || 0)),
+      lastRating: Number.isFinite(Number(p.lastRating)) ? Number(p.lastRating) : null,
+      passes: Math.max(0, Number(p.passes || 0)),
+      successfulRecitations: Math.max(0, Number(p.successfulRecitations || 0)),
+      troubleWords: p.troubleWords && typeof p.troubleWords === "object" ? p.troubleWords : {},
+      createdAt: p.createdAt || now,
+      updatedAt: p.updatedAt || now,
+      reviewHistory: Array.isArray(p.reviewHistory) ? p.reviewHistory : []
+    };
+  }
+
+  function loadState() {
+    let loaded = defaultState();
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        loaded = {
+          ...defaultState(),
+          ...parsed,
+          settings: { ...defaultState().settings, ...(parsed.settings || {}) },
+          meta: { ...defaultState().meta, ...(parsed.meta || {}) },
+          passages: Array.isArray(parsed.passages) ? parsed.passages.map(normalizePassage) : [],
+          reviewLog: Array.isArray(parsed.reviewLog) ? parsed.reviewLog : []
+        };
+      }
+    } catch (error) {
+      console.error("Could not load saved data", error);
+    }
+    loaded.version = APP_VERSION;
+    seedRomansChapter(loaded);
+    refreshUnlocks(loaded);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+    return loaded;
+  }
+
+  function seedRomansChapter(targetState) {
+    const existing = new Set(targetState.passages.map(p => p.seedKey || p.id));
+    romansSeed().forEach(p => {
+      if (!existing.has(p.seedKey)) targetState.passages.push(normalizePassage(p));
+    });
+    targetState.meta.seededChapters = Array.from(new Set([...(targetState.meta.seededChapters || []), ROMANS_CHAPTER_ID]));
+  }
+
+  function saveState() {
+    state.version = APP_VERSION;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function passageById(id, sourceState = state) {
+    return sourceState.passages.find(p => p.id === id || p.seedKey === id);
+  }
+
+  function isUnlocked(p, sourceState = state) {
+    if (!p.prerequisites.length) return true;
+    return p.prerequisites.every(id => (passageById(id, sourceState)?.passes || 0) >= 1);
+  }
+
+  function refreshUnlocks(sourceState = state) {
+    const newlyUnlocked = [];
+    sourceState.passages.forEach(p => {
+      if (isUnlocked(p, sourceState) && !p.dueDate) {
+        p.dueDate = todayISO();
+        p.unlockedAt = new Date().toISOString();
+        newlyUnlocked.push(p.id);
+      }
+    });
+    return newlyUnlocked;
+  }
+
+  function isMastered(p) {
+    return p.level === 5 && p.successfulRecitations >= 2 && p.interval >= 21;
+  }
+
+  function learnedCount(passages) { return passages.filter(p => p.passes >= 1).length; }
+  function masteredCount(passages) { return passages.filter(isMastered).length; }
+
+  function toast(message) {
+    const el = document.getElementById("toast");
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 2400);
+  }
+
+  function applyTheme() {
+    const theme = state.settings.theme;
+    if (theme === "system") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", theme);
+  }
+
+  function setSceneMode(isReview) {
+    document.body.classList.toggle("review-mode", Boolean(isReview));
+  }
+
+  function switchView(name) {
+    activeView = name;
+    setSceneMode(name === "review");
+    document.querySelectorAll(".view").forEach(v => v.classList.add("hidden"));
+    document.getElementById(`view-${name}`)?.classList.remove("hidden");
+    document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.view === name));
+    if (name !== "review") renderView(name);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function renderView(name) {
+    if (name === "today") renderToday();
+    if (name === "library") renderLibrary();
+    if (name === "add") renderAdd();
+    if (name === "progress") renderProgress();
+    if (name === "settings") renderSettings();
+  }
+
+  function renderAll() {
+    renderToday();
+    renderLibrary();
+    renderAdd();
+    renderProgress();
+    renderSettings();
+  }
+
+  function getRomansPassages() {
+    return state.passages.filter(p => p.chapterId === ROMANS_CHAPTER_ID).sort((a, b) => a.order - b.order);
+  }
+
+  function getDuePassages() {
+    const today = todayISO();
+    return state.passages
+      .filter(p => p.text && isUnlocked(p) && p.dueDate && p.dueDate <= today)
+      .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || a.order - b.order || a.createdAt.localeCompare(b.createdAt));
+  }
+
+  function reviewsToday() {
+    const today = todayISO();
+    return state.reviewLog.filter(r => String(r.reviewedAt || "").slice(0, 10) === today);
+  }
+
+  function streakCount() {
+    const dates = new Set(state.reviewLog.map(r => String(r.reviewedAt || "").slice(0, 10)).filter(Boolean));
+    let streak = 0;
+    const cursor = new Date();
+    cursor.setHours(12, 0, 0, 0);
+    if (!dates.has(dateToISO(cursor))) cursor.setDate(cursor.getDate() - 1);
+    while (dates.has(dateToISO(cursor))) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  function nextPathPassage() {
+    const romans = getRomansPassages();
+    return romans.find(p => isUnlocked(p) && p.passes < 1) || romans.find(p => isUnlocked(p) && !isMastered(p)) || null;
+  }
+
+  function statusForPassage(p) {
+    if (!isUnlocked(p)) return { label: "Locked", className: "status-locked", symbol: "◦" };
+    if (isMastered(p)) return { label: "Mastered", className: "status-mastered", symbol: "✓" };
+    if (p.passes >= 1) return { label: LEVELS[p.level].name, className: "status-learning", symbol: "↗" };
+    return { label: p.dueDate && p.dueDate <= todayISO() ? "Ready" : LEVELS[p.level].name, className: "status-ready", symbol: "•" };
+  }
+
+  function emptyState(title, body, action = "") {
+    return `<div class="empty"><div class="empty-mark">SM</div><h3>${escapeHTML(title)}</h3><p>${escapeHTML(body)}</p>${action}</div>`;
+  }
+
+  function renderToday() {
+    const due = getDuePassages();
+    const reviewed = reviewsToday();
+    const romans = getRomansPassages();
+    const learned = learnedCount(romans);
+    const mastered = masteredCount(romans);
+    const next = nextPathPassage();
+    const pathPercent = Math.round(learned / Math.max(1, romans.length) * 100);
+    const retentionPercent = Math.round(mastered / Math.max(1, romans.length) * 100);
+    const nextDue = state.passages.filter(p => isUnlocked(p) && p.dueDate > todayISO()).sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];
+    const container = document.getElementById("view-today");
+
+    container.innerHTML = `
+      <div class="hero">
+        <article class="hero-card">
+          <div class="eyebrow">Daily practice</div>
+          <h1>${due.length ? `${due.length} review${due.length === 1 ? "" : "s"} ready` : "Your queue is clear"}</h1>
+          <p>${due.length
+            ? "Recall first, inspect errors, and grade honestly. The path unlocks only after active recall—not mere recognition."
+            : nextDue
+              ? `Nothing is due today. The next scheduled review is ${formatDate(nextDue.dueDate)}.`
+              : "Your currently unlocked material is complete for now."}</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="startReviewBtn" ${due.length ? "" : "disabled"}>Begin review</button>
+            ${next ? `<button class="btn btn-secondary" data-review-id="${escapeHTML(next.id)}">Study path item</button>` : ""}
+          </div>
+        </article>
+        <aside class="hero-card stats-card">
+          <div class="stat-row"><span>Reviewed today</span><strong>${reviewed.length}</strong></div>
+          <div class="stat-row"><span>Current streak</span><strong>${streakCount()}</strong></div>
+          <div class="stat-row"><span>Mastered items</span><strong>${mastered}</strong></div>
+        </aside>
+      </div>
+
+      <section class="codex-splash card">
+        <div class="codex-splash-copy">
+          <div class="eyebrow">Epistle artwork</div>
+          <h2><span class="illuminated-initial">R</span>omans</h2>
+          <p>Enter the chapter as a richly illuminated codex: promised gospel, apostolic mission, unveiled righteousness, and the grave indictment of unrighteousness.</p>
+          <div class="codex-sigil-row"><span class="badge badge-accent">Ancient textbook theme</span><span class="badge">Illuminated study space</span></div>
+        </div>
+        ${romanSceneHTML()}
+      </section>
+
+      <section class="chapter-hero card">
+        <div class="chapter-heading">
+          <div>
+            <div class="eyebrow">Guided chapter</div>
+            <h2><span class="illuminated-initial">R</span>omans 1 · The Gospel Exalted</h2>
+            <p>Seven thought-units, three cumulative bridges, and a whole-chapter challenge.</p>
+          </div>
+          <span class="badge badge-accent">LSB · private copy</span>
+        </div>
+        ${romanSceneHTML(true)}
+        <div class="chapter-bars">
+          <div><div class="chapter-bar-label"><span>Learning path</span><strong>${pathPercent}%</strong></div><div class="progress-track"><div class="progress-fill" style="width:${pathPercent}%"></div></div></div>
+          <div><div class="chapter-bar-label"><span>Long-term mastery</span><strong>${retentionPercent}%</strong></div><div class="progress-track"><div class="progress-fill mastery-fill" style="width:${retentionPercent}%"></div></div></div>
+        </div>
+        <div class="flow-map" aria-label="Romans 1 argument flow">
+          <span>Gospel promised</span><b>→</b><span>Mission to Rome</span><b>→</b><span>Gospel thesis</span><b>→</b><span>Truth suppressed</span><b>→</b><span>Threefold giving over</span>
+        </div>
+        ${next ? `<div class="next-target"><div><span>Next target</span><strong>${escapeHTML(next.reference)} · ${escapeHTML(next.title)}</strong></div><button class="btn btn-small btn-primary" data-review-id="${escapeHTML(next.id)}">Open</button></div>` : ""}
+      </section>
+
+      <div class="section-head"><div><h2>Due now</h2><p>Your active recall queue.</p></div><button class="btn btn-small btn-ghost" data-go="library">View chapter tree</button></div>
+      ${due.length ? `<div class="passage-list">${due.slice(0, 8).map(renderDueCard).join("")}</div>` : emptyState("Nothing due", "Use the chapter tree to study early, or return when the scheduler brings a passage back.")}
+    `;
+
+    document.getElementById("startReviewBtn")?.addEventListener("click", () => startReview());
+    bindCommonViewActions(container);
+  }
+
+  function renderDueCard(p) {
+    const status = statusForPassage(p);
+    return `<article class="passage-card">
+      <div>
+        <h3>${escapeHTML(p.reference)}${p.title ? ` · ${escapeHTML(p.title)}` : ""}</h3>
+        <div class="meta"><span class="badge badge-accent">${escapeHTML(kindLabel(p.kind))}</span><span class="badge">Level ${p.level}: ${escapeHTML(LEVELS[p.level].name)}</span><span>${escapeHTML(dueLabel(p.dueDate))}</span></div>
+      </div>
+      <div class="card-actions"><button class="btn btn-small btn-primary" data-review-id="${escapeHTML(p.id)}">Review</button></div>
+    </article>`;
+  }
+
+  function renderLibrary() {
+    const romans = getRomansPassages();
+    const custom = state.passages.filter(p => !p.chapterId).sort((a, b) => a.reference.localeCompare(b.reference));
+    const container = document.getElementById("view-library");
+    const milestones = romans.filter(p => p.kind === "bridge" || p.kind === "chapter");
+
+    container.innerHTML = `
+      <div class="section-head chapter-library-head">
+        <div><div class="eyebrow">Mastery tree</div><h1><span class="illuminated-initial">R</span>omans 1</h1><p>Progress from short segments to integrated, whole-chapter recall.</p></div>
+        <button class="btn btn-secondary" data-go="add">Add another passage</button>
+      </div>
+
+      <section class="card argument-card">
+        <h2><span class="illuminated-initial">T</span>he argument at a glance</h2>
+        ${romanSceneHTML(true)}
+        <div class="argument-grid">
+          ${ROMANS_UNITS.map((unit, index) => `<div class="argument-step"><span>${index + 1}</span><div><strong>${escapeHTML(unit.range)}</strong><p>${escapeHTML(unit.title)}</p></div></div>`).join("")}
+        </div>
+      </section>
+
+      <div class="unit-stack">
+        ${ROMANS_UNITS.map(unit => renderUnitCard(unit, romans)).join("")}
+      </div>
+
+      <div class="section-head"><div><h2>Cumulative integration</h2><p>These drills join the seams between thought-units.</p></div></div>
+      <div class="milestone-grid">${milestones.map(renderMilestoneCard).join("")}</div>
+
+      <div class="section-head"><div><h2>Other passages</h2><p>${custom.length} custom passage${custom.length === 1 ? "" : "s"} stored locally.</p></div></div>
+      ${custom.length ? `<div class="passage-list">${custom.map(renderCustomCard).join("")}</div>` : emptyState("No custom passages", "Romans 1 is already loaded. Add other authorized Scripture passages whenever you are ready.", `<button class="btn btn-primary" data-go="add">Add passage</button>`) }
+    `;
+    bindCommonViewActions(container);
+  }
+
+  function renderUnitCard(unit, romans) {
+    const items = romans.filter(p => p.unitId === unit.id);
+    const learned = learnedCount(items);
+    const percent = Math.round(learned / Math.max(1, items.length) * 100);
+    return `<article class="card unit-card">
+      <div class="unit-head">
+        <div><span class="unit-range">Romans ${escapeHTML(unit.range)}</span><h2>${illuminateHTML(unit.title)}</h2><p>${escapeHTML(unit.summary)}</p></div>
+        <strong>${percent}%</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
+      <div class="path-list">${items.map(renderPathRow).join("")}</div>
+    </article>`;
+  }
+
+  function renderPathRow(p) {
+    const status = statusForPassage(p);
+    const lockedReason = !isUnlocked(p) ? prerequisiteLabel(p) : "";
+    return `<div class="path-row ${status.className}">
+      <div class="status-dot" aria-hidden="true">${status.symbol}</div>
+      <div class="path-copy">
+        <strong>${escapeHTML(p.reference)} · ${escapeHTML(p.title)}</strong>
+        <span>${escapeHTML(kindLabel(p.kind))}${lockedReason ? ` · ${escapeHTML(lockedReason)}` : ` · ${escapeHTML(status.label)}`}</span>
+      </div>
+      ${isUnlocked(p)
+        ? `<button class="btn btn-small ${p.dueDate && p.dueDate <= todayISO() ? "btn-primary" : "btn-ghost"}" data-review-id="${escapeHTML(p.id)}">${p.passes ? "Practice" : "Begin"}</button>`
+        : `<span class="lock-mark" title="${escapeHTML(lockedReason)}">⌁</span>`}
+    </div>`;
+  }
+
+  function prerequisiteLabel(p) {
+    const remaining = p.prerequisites.map(id => passageById(id)).filter(prereq => !prereq || prereq.passes < 1);
+    if (!remaining.length) return "Ready to unlock";
+    if (remaining.length === 1) return `Complete ${remaining[0]?.reference || "the prior step"}`;
+    return `Complete ${remaining.length} prior steps`;
+  }
+
+  function renderMilestoneCard(p) {
+    const status = statusForPassage(p);
+    return `<article class="card milestone-card ${status.className}">
+      <div class="milestone-icon">${p.kind === "chapter" ? "Ⅽ" : "↔"}</div>
+      <div><span class="badge ${isUnlocked(p) ? "badge-accent" : ""}">${escapeHTML(kindLabel(p.kind))}</span><h3>${escapeHTML(p.reference)}</h3><p>${escapeHTML(p.title)}</p></div>
+      ${isUnlocked(p) ? `<button class="btn btn-small btn-primary" data-review-id="${escapeHTML(p.id)}">${p.passes ? "Practice" : "Begin"}</button>` : `<span class="help">${escapeHTML(prerequisiteLabel(p))}</span>`}
+    </article>`;
+  }
+
+  function renderCustomCard(p) {
+    return `<article class="passage-card">
+      <div><h3>${escapeHTML(p.reference)}</h3><div class="meta"><span class="badge">${escapeHTML(p.translation)}</span><span class="badge">Level ${p.level}: ${escapeHTML(LEVELS[p.level].name)}</span><span>${escapeHTML(dueLabel(p.dueDate))}</span></div></div>
+      <div class="card-actions"><button class="btn btn-small btn-primary" data-review-id="${escapeHTML(p.id)}">Study</button><button class="btn btn-small btn-ghost" data-edit-id="${escapeHTML(p.id)}">Edit</button></div>
+    </article>`;
+  }
+
+  function bindCommonViewActions(container) {
+    container.querySelectorAll("[data-go]").forEach(btn => btn.addEventListener("click", () => switchView(btn.dataset.go)));
+    container.querySelectorAll("[data-review-id]").forEach(btn => btn.addEventListener("click", () => startReview([btn.dataset.reviewId])));
+    container.querySelectorAll("[data-edit-id]").forEach(btn => btn.addEventListener("click", () => openEditDialog(btn.dataset.editId)));
+  }
+
+  function renderAdd() {
+    const collections = [...new Set(state.passages.map(p => p.collection))].sort();
+    const container = document.getElementById("view-add");
+    container.innerHTML = `
+      <div class="section-head"><div><h1>Add a passage</h1><p>Authorized text remains in this browser’s local storage.</p></div></div>
+      <article class="card">
+        <div class="notice notice-warning" style="margin-bottom:18px">Use only Scripture text you are authorized to store. Backups contain the complete passage text.</div>
+        <form id="addPassageForm">
+          <div class="form-grid">
+            <div class="field"><label for="newReference">Reference</label><input class="input" id="newReference" required placeholder="Psalm 1:1–3" /></div>
+            <div class="field"><label for="newTranslation">Translation</label><input class="input" id="newTranslation" value="LSB" required /></div>
+            <div class="field"><label for="newCollection">Collection</label><input class="input" id="newCollection" list="collectionList" value="Unsorted" /><datalist id="collectionList">${collections.map(c => `<option value="${escapeHTML(c)}"></option>`).join("")}</datalist></div>
+            <div class="field"><label for="newTags">Tags</label><input class="input" id="newTags" placeholder="Prayer, Christology" /><div class="help">Separate tags with commas.</div></div>
+            <div class="field full"><label for="newText">Passage text</label><textarea id="newText" required placeholder="Paste the authorized passage text here…"></textarea><div class="help">Verse numbers are optional. This text is never transmitted by the app.</div></div>
+          </div>
+          <div class="form-actions"><button class="btn btn-primary" type="submit">Save passage</button><button class="btn btn-secondary" type="reset">Clear</button></div>
+        </form>
+      </article>`;
+    document.getElementById("addPassageForm").addEventListener("submit", addPassage);
+  }
+
+  function addPassage(event) {
+    event.preventDefault();
+    const passage = normalizePassage({
+      id: makeId(),
+      reference: document.getElementById("newReference").value,
+      text: document.getElementById("newText").value,
+      collection: document.getElementById("newCollection").value || "Unsorted",
+      translation: document.getElementById("newTranslation").value || "LSB",
+      tags: parseTags(document.getElementById("newTags").value),
+      kind: "custom",
+      dueDate: todayISO(),
+      unlockedAt: new Date().toISOString()
+    });
+    state.passages.push(passage);
+    saveState();
+    event.target.reset();
+    toast(`${passage.reference} added`);
+    renderAll();
+    switchView("library");
+  }
+
+  function openEditDialog(id) {
+    const p = passageById(id);
+    if (!p || p.chapterId) return;
+    editingId = p.id;
+    const body = document.getElementById("editDialogBody");
+    body.innerHTML = `
+      <div class="field"><label for="editReference">Reference</label><input class="input" id="editReference" value="${escapeHTML(p.reference)}" /></div>
+      <div class="field"><label for="editTranslation">Translation</label><input class="input" id="editTranslation" value="${escapeHTML(p.translation)}" /></div>
+      <div class="field"><label for="editCollection">Collection</label><input class="input" id="editCollection" value="${escapeHTML(p.collection)}" /></div>
+      <div class="field"><label for="editTags">Tags</label><input class="input" id="editTags" value="${escapeHTML(p.tags.join(", "))}" /></div>
+      <div class="field"><label for="editText">Passage text</label><textarea id="editText">${escapeHTML(p.text)}</textarea></div>
+      <div class="form-actions"><button class="btn btn-primary" id="saveEditBtn">Save changes</button><button class="btn btn-secondary" id="resetProgressBtn">Reset progress</button><button class="btn btn-danger" id="deletePassageBtn">Delete</button></div>`;
+    document.getElementById("saveEditBtn").addEventListener("click", saveEditedPassage);
+    document.getElementById("resetProgressBtn").addEventListener("click", resetPassageProgress);
+    document.getElementById("deletePassageBtn").addEventListener("click", deletePassage);
+    document.getElementById("editDialog").showModal();
+  }
+
+  function saveEditedPassage() {
+    const p = passageById(editingId);
+    if (!p) return;
+    Object.assign(p, {
+      reference: document.getElementById("editReference").value.trim() || p.reference,
+      translation: document.getElementById("editTranslation").value.trim() || p.translation,
+      collection: document.getElementById("editCollection").value.trim() || "Unsorted",
+      tags: parseTags(document.getElementById("editTags").value),
+      text: document.getElementById("editText").value.trim(),
+      updatedAt: new Date().toISOString()
+    });
+    saveState();
+    document.getElementById("editDialog").close();
+    renderAll();
+    toast("Passage updated");
+  }
+
+  function resetPassageProgress() {
+    const p = passageById(editingId);
+    if (!p || !confirm(`Reset all progress for ${p.reference}?`)) return;
+    Object.assign(p, { level: 1, interval: 0, dueDate: todayISO(), repetitions: 0, lapses: 0, lastRating: null, passes: 0, successfulRecitations: 0, troubleWords: {}, reviewHistory: [] });
+    saveState();
+    document.getElementById("editDialog").close();
+    renderAll();
+    toast("Progress reset");
+  }
+
+  function deletePassage() {
+    const p = passageById(editingId);
+    if (!p || !confirm(`Delete ${p.reference}? This cannot be undone.`)) return;
+    state.passages = state.passages.filter(item => item.id !== p.id);
+    saveState();
+    document.getElementById("editDialog").close();
+    renderAll();
+    toast("Passage deleted");
+  }
+
+  function renderProgress() {
+    const romans = getRomansPassages();
+    const totalReviews = state.reviewLog.length;
+    const successful = state.reviewLog.filter(r => r.rating >= 4).length;
+    const accuracy = totalReviews ? Math.round(successful / totalReviews * 100) : 0;
+    const learned = learnedCount(romans);
+    const mastered = masteredCount(romans);
+    const fullChapter = passageById("r1-chapter");
+    const trouble = romans.flatMap(p => Object.entries(p.troubleWords || {}).map(([word, count]) => ({ word, count, reference: p.reference }))).sort((a, b) => b.count - a.count).slice(0, 10);
+    const last30 = Array.from({ length: 30 }, (_, offset) => {
+      const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (29 - offset));
+      const iso = dateToISO(d);
+      return state.reviewLog.filter(r => String(r.reviewedAt).slice(0, 10) === iso).length;
+    });
+    const maxDay = Math.max(1, ...last30);
+    const container = document.getElementById("view-progress");
+
+    container.innerHTML = `
+      <div class="section-head"><div><h1>Progress</h1><p>Distinguishing first exposure, active recall, and durable mastery.</p></div></div>
+      <div class="grid">
+        <article class="card metric"><strong>${learned}/${romans.length}</strong><span>Romans 1 path items recalled</span></article>
+        <article class="card metric"><strong>${mastered}</strong><span>Durably mastered</span></article>
+        <article class="card metric"><strong>${accuracy}%</strong><span>Reviews rated 4–5</span></article>
+      </div>
+      <section class="card progress-summary">
+        <div class="chapter-heading"><div><h2>Whole-chapter readiness</h2><p>${fullChapter && isUnlocked(fullChapter) ? "The chapter challenge is unlocked." : "The whole-chapter challenge unlocks after the three cumulative bridges."}</p></div><strong>${fullChapter?.successfulRecitations || 0}/2 full recitations</strong></div>
+        <div class="progress-track"><div class="progress-fill mastery-fill" style="width:${Math.min(100, ((fullChapter?.successfulRecitations || 0) / 2) * 100)}%"></div></div>
+      </section>
+      <section class="card">
+        <div class="section-head" style="margin-top:0"><div><h2>Thirty-day activity</h2><p>${totalReviews} total review${totalReviews === 1 ? "" : "s"}.</p></div></div>
+        <div class="activity-bars" aria-label="Thirty day review activity">${last30.map(count => `<div title="${count} review${count === 1 ? "" : "s"}" style="height:${Math.max(4, Math.round(count / maxDay * 100))}%"></div>`).join("")}</div>
+      </section>
+      <section class="card">
+        <div class="section-head" style="margin-top:0"><div><h2>Error repair</h2><p>Words missed in typed recall are prioritized in later cloze drills.</p></div></div>
+        ${trouble.length ? `<div class="trouble-grid">${trouble.map(item => `<span class="badge"><strong>${escapeHTML(item.word)}</strong>&nbsp;×${item.count}&nbsp;·&nbsp;${escapeHTML(item.reference)}</span>`).join("")}</div>` : `<p class="help">No recurring trouble words recorded yet.</p>`}
+      </section>`;
+  }
+
+  function renderSettings() {
+    const container = document.getElementById("view-settings");
+    container.innerHTML = `
+      <div class="section-head"><div><h1>Settings</h1><p>Adjust recall difficulty and protect your private library.</p></div></div>
+      <section class="card">
+        <div class="setting-row"><div class="setting-copy"><strong>Appearance</strong><span>Use the device theme or force light/dark mode.</span></div><select class="setting-control" id="themeSetting"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+        <div class="setting-row"><div class="setting-copy"><strong>Cloze difficulty</strong><span>Percentage of eligible words hidden. Recorded trouble words are hidden first.</span></div><select class="setting-control" id="clozeSetting"><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option></select></div>
+        <div class="setting-row"><div class="setting-copy"><strong>New path items per session</strong><span>Limits newly unlocked material; due reviews are never hidden.</span></div><select class="setting-control" id="dailyNewSetting"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+        <div class="setting-row"><div class="setting-copy"><strong>Strict punctuation</strong><span>Include capitalization and punctuation when comparing typed recall.</span></div><input id="punctuationSetting" type="checkbox" /></div>
+      </section>
+      <div class="section-head"><div><h2>Private data</h2><p>Back up before clearing browser data or moving devices.</p></div></div>
+      <section class="card">
+        <div class="notice notice-warning" style="margin-bottom:18px">The Romans 1 text and exported backups are for your authorized personal use. Do not publicly distribute this populated copy.</div>
+        <div class="form-actions"><button class="btn btn-primary" id="exportBtn">Export backup</button><button class="btn btn-secondary" id="importBtn">Import backup</button><button class="btn btn-danger" id="eraseBtn">Erase all local data</button></div>
+      </section>
+      <div class="section-head"><div><h2>How mastery works</h2></div></div>
+      <section class="card ladder">${Object.entries(LEVELS).map(([level, value]) => `<div class="ladder-row"><div class="ladder-num">${level}</div><div><strong>${escapeHTML(value.name)}</strong><span>${escapeHTML(value.description)}</span></div><span class="badge">Level ${level}</span></div>`).join("")}</section>`;
+
+    const theme = document.getElementById("themeSetting"); theme.value = state.settings.theme;
+    const cloze = document.getElementById("clozeSetting"); cloze.value = String(state.settings.clozePercent);
+    const daily = document.getElementById("dailyNewSetting"); daily.value = String(state.settings.dailyNewLimit);
+    const punctuation = document.getElementById("punctuationSetting"); punctuation.checked = Boolean(state.settings.strictPunctuation);
+    theme.addEventListener("change", () => { state.settings.theme = theme.value; saveState(); applyTheme(); });
+    cloze.addEventListener("change", () => { state.settings.clozePercent = Number(cloze.value); saveState(); });
+    daily.addEventListener("change", () => { state.settings.dailyNewLimit = Number(daily.value); saveState(); });
+    punctuation.addEventListener("change", () => { state.settings.strictPunctuation = punctuation.checked; saveState(); });
+    document.getElementById("exportBtn").addEventListener("click", exportBackup);
+    document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importDialog").showModal());
+    document.getElementById("eraseBtn").addEventListener("click", eraseData);
+  }
+
+  function exportBackup() {
+    const payload = { ...state, exportedAt: new Date().toISOString(), app: "Scripture Memory Codex" };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `scripture-memory-codex-backup-${todayISO()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    toast("Backup exported");
+  }
+
+  async function importBackup() {
+    const input = document.getElementById("importFile");
+    const file = input.files?.[0];
+    if (!file) { toast("Choose a JSON backup first"); return; }
+    try {
+      const parsed = JSON.parse(await file.text());
+      if (!Array.isArray(parsed.passages)) throw new Error("No passages array found");
+      const incoming = parsed.passages.map(normalizePassage);
+      const replace = confirm(`Import ${incoming.length} passages? Press OK to replace current data, or Cancel to merge.`);
+      if (replace) {
+        state = {
+          ...defaultState(),
+          ...parsed,
+          version: APP_VERSION,
+          settings: { ...defaultState().settings, ...(parsed.settings || {}) },
+          meta: { ...defaultState().meta, ...(parsed.meta || {}) },
+          passages: incoming,
+          reviewLog: Array.isArray(parsed.reviewLog) ? parsed.reviewLog : []
+        };
+      } else {
+        const keys = new Set(state.passages.map(p => p.seedKey || `${p.reference.toLowerCase()}|${p.text}`));
+        incoming.forEach(p => {
+          const key = p.seedKey || `${p.reference.toLowerCase()}|${p.text}`;
+          if (!keys.has(key)) { state.passages.push(p); keys.add(key); }
+        });
+        if (Array.isArray(parsed.reviewLog)) state.reviewLog.push(...parsed.reviewLog);
+      }
+      seedRomansChapter(state);
+      refreshUnlocks(state);
+      saveState();
+      document.getElementById("importDialog").close();
+      input.value = "";
+      applyTheme();
+      renderAll();
+      toast("Backup imported");
+    } catch (error) {
+      console.error(error);
+      toast("That backup could not be imported");
+    }
+  }
+
+  function eraseData() {
+    const confirmation = prompt("Type ERASE to remove all local passages and progress. Romans 1 will be restored as a fresh chapter path.");
+    if (confirmation !== "ERASE") return;
+    localStorage.removeItem(STORAGE_KEY);
+    state = defaultState();
+    seedRomansChapter(state);
+    refreshUnlocks(state);
+    saveState();
+    applyTheme();
+    renderAll();
+    switchView("today");
+    toast("Local data reset");
+  }
+
+  function startReview(ids = null) {
+    const queue = ids
+      ? ids.map(id => passageById(id)).filter(p => p && isUnlocked(p))
+      : getDuePassages();
+    if (!queue.length) { toast("No passages are ready"); return; }
+    reviewSession = {
+      queue: [...new Map(queue.map(p => [p.id, p])).values()],
+      index: 0,
+      completed: 0,
+      revealed: false,
+      typedCompared: false,
+      challenge: null,
+      missedWords: [],
+      attemptCounts: {},
+      newItemsAdded: 0,
+      unlocked: []
+    };
+    activeView = "review";
+    setSceneMode(true);
+    document.querySelectorAll(".view").forEach(v => v.classList.add("hidden"));
+    document.getElementById("view-review").classList.remove("hidden");
+    document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
+    renderReviewCard();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function currentReviewPassage() {
+    return reviewSession?.queue[reviewSession.index] || null;
+  }
+
+  function buildChallenge(p) {
+    const base = {
+      reference: p.reference,
+      text: p.text,
+      verseStart: p.verseStart,
+      verseEnd: p.verseEnd,
+      mode: "full",
+      label: kindLabel(p.kind),
+      instruction: "Recite the entire passage aloud without textual help. Reveal only after completing your attempt."
+    };
+    if (p.level !== 5 || !p.chapterId || p.kind === "segment") return base;
+
+    const cycle = p.repetitions % 3;
+    if (cycle === 1 && p.verseStart && p.verseEnd && p.verseEnd - p.verseStart >= 2) {
+      const candidates = [p.verseStart + 1, ...p.boundaries.map(v => v + 1)].filter(v => v > p.verseStart && v <= p.verseEnd);
+      const start = candidates[stableHash(`${p.id}:${p.repetitions}:entry`) % candidates.length];
+      return {
+        ...base,
+        reference: `Romans 1:${start}–${p.verseEnd}`,
+        text: romansText(start, p.verseEnd),
+        verseStart: start,
+        mode: "random-entry",
+        label: "Random-entry drill",
+        instruction: `Begin precisely at verse ${start} and continue through verse ${p.verseEnd}. This prevents dependence on always starting at the beginning.`
+      };
+    }
+    if (cycle === 2 && p.boundaries.length) {
+      const boundary = p.boundaries[stableHash(`${p.id}:${p.repetitions}:transition`) % p.boundaries.length];
+      const start = Math.max(p.verseStart, boundary - 1);
+      const end = Math.min(p.verseEnd, boundary + 1);
+      return {
+        ...base,
+        reference: `Romans 1:${start}–${end}`,
+        text: romansText(start, end),
+        verseStart: start,
+        verseEnd: end,
+        mode: "transition",
+        label: "Transition drill",
+        instruction: `Recite verses ${start}–${end}, carrying the wording cleanly across the boundary after verse ${boundary}.`
+      };
+    }
+    return base;
+  }
+
+  function renderReviewCard() {
+    const p = currentReviewPassage();
+    if (!p) { finishReview(); return; }
+    reviewSession.revealed = false;
+    reviewSession.typedCompared = false;
+    reviewSession.missedWords = [];
+    reviewSession.challenge = buildChallenge(p);
+    const total = reviewSession.queue.length;
+    const current = reviewSession.index + 1;
+    const progress = Math.round((reviewSession.index / Math.max(1, total)) * 100);
+    const status = statusForPassage(p);
+    const container = document.getElementById("view-review");
+
+    container.innerHTML = `
+      <div class="review-shell">
+        <div class="review-head">
+          <button class="btn btn-small btn-ghost" id="exitReviewBtn">Exit</button>
+          <div class="review-progress"><div class="chapter-bar-label"><span>${current} of ${total}</span><strong>${escapeHTML(p.collection)}</strong></div><div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div></div>
+        </div>
+        <article class="review-card">
+          <div class="scribe-banner">
+            <div><span class="eyebrow">Scriptorium</span><strong>${escapeHTML(p.reference)}</strong></div>
+            <div class="scribe-banner-icons"><span>✒︎</span><span>☉</span><span>⌘</span></div>
+          </div>
+          <div class="review-stage"><span class="badge badge-accent">Level ${p.level} · ${escapeHTML(LEVELS[p.level].name)}</span><span class="badge">${escapeHTML(reviewSession.challenge.label)}</span></div>
+          ${reviewContentHTML(p, reviewSession.challenge)}
+          <div class="review-spacer"></div>
+          <div class="grade-panel hidden" id="gradePanel">
+            <h3>How complete and independent was your recall?</h3>
+            <div class="grade-grid">
+              ${[[0,"Blank"],[1,"Recognized"],[2,"Major help"],[3,"Minor errors"],[4,"Accurate"],[5,"Effortless"]].map(([rating, label]) => `<button class="grade-btn" data-rating="${rating}">${rating}<span>${label}</span></button>`).join("")}
+            </div>
+            <p class="help" style="text-align:center;margin-top:11px">Ratings 4–5 unlock the next path item only after an active-recall level.</p>
+          </div>
+        </article>
+      </div>`;
+
+    document.getElementById("exitReviewBtn").addEventListener("click", () => {
+      reviewSession = null;
+      renderAll();
+      switchView("today");
+    });
+    bindReviewControls(p);
+  }
+
+  function reviewContentHTML(p, challenge) {
+    if (p.level === 1) {
+      return `<div class="reference">${challenge.reference.startsWith("Romans") ? illuminateHTML(challenge.reference) : escapeHTML(challenge.reference)}</div>
+        <p class="instruction">Read aloud attentively. Notice conjunctions, repeated language, and how this segment advances Paul’s argument.</p>
+        <div class="memory-prompt"><div class="scripture">${scriptureHTML(challenge, p)}</div></div>
+        <div class="review-actions"><button class="btn btn-primary" id="readyToGradeBtn">I read it carefully</button></div>`;
+    }
+    if (p.level === 2) {
+      return `<div class="reference">${challenge.reference.startsWith("Romans") ? illuminateHTML(challenge.reference) : escapeHTML(challenge.reference)}</div>
+        <p class="instruction">Supply every hidden word aloud before revealing the passage. Previously missed words are hidden first.</p>
+        <div class="memory-prompt"><div class="scripture">${clozeHTML(challenge, p)}</div></div>
+        <div class="review-actions"><button class="btn btn-primary" id="revealBtn">Reveal passage</button></div>`;
+    }
+    if (p.level === 3) {
+      return `<div class="reference">${challenge.reference.startsWith("Romans") ? illuminateHTML(challenge.reference) : escapeHTML(challenge.reference)}</div>
+        <p class="instruction">Use only first letters and verse markers. Recite the complete wording aloud.</p>
+        <div class="memory-prompt"><div class="scripture first-letters">${firstLettersHTML(challenge, p)}</div></div>
+        <div class="review-actions"><button class="btn btn-primary" id="revealBtn">Reveal passage</button></div>`;
+    }
+    if (p.level === 4) {
+      return `<div class="reference">${challenge.reference.startsWith("Romans") ? illuminateHTML(challenge.reference) : escapeHTML(challenge.reference)}</div>
+        <p class="instruction">Type the passage from memory. The comparison will record missed words for targeted repair.</p>
+        <textarea class="typing-area" id="typingAnswer" placeholder="Type from memory…" autocapitalize="sentences" spellcheck="false"></textarea>
+        <div id="compareResult"></div>
+        <div class="review-actions"><button class="btn btn-primary" id="compareBtn">Compare answer</button></div>`;
+    }
+    return `<div class="reference">${challenge.reference.startsWith("Romans") ? illuminateHTML(challenge.reference) : escapeHTML(challenge.reference)}</div>
+      <p class="instruction">${escapeHTML(challenge.instruction)}</p>
+      <div class="memory-prompt"><div class="scripture no-cue">No textual cue</div></div>
+      <div class="review-actions"><button class="btn btn-primary" id="revealBtn">Reveal expected passage</button></div>`;
+  }
+
+  function scriptureHTML(challenge, p) {
+    if (p.chapterId === ROMANS_CHAPTER_ID && challenge.verseStart && challenge.verseEnd) {
+      const chunks = [];
+      for (let verse = challenge.verseStart; verse <= challenge.verseEnd; verse += 1) {
+        chunks.push(`<span class="verse-chunk"><sup class="verse-number">${verse}</sup>${escapeHTML(ROMANS_1_VERSES[verse])}</span>`);
+      }
+      return chunks.join(" ");
+    }
+    return escapeHTML(challenge.text);
+  }
+
+  function clozeHTML(challenge, p) {
+    const words = challenge.text.split(/(\s+)/);
+    const eligible = [];
+    words.forEach((token, index) => {
+      const bare = normalizeWord(token);
+      if (bare.length >= 3) eligible.push({ index, bare, trouble: Number(p.troubleWords?.[bare] || 0), score: stableHash(`${p.id}:${challenge.reference}:${index}`) });
+    });
+    const target = Math.max(1, Math.round(eligible.length * state.settings.clozePercent / 100));
+    eligible.sort((a, b) => b.trouble - a.trouble || a.score - b.score);
+    const hidden = new Set(eligible.slice(0, target).map(item => item.index));
+    return words.map((token, index) => {
+      if (!hidden.has(index)) return escapeHTML(token);
+      const leading = token.match(/^\W*/u)?.[0] || "";
+      const trailing = token.match(/\W*$/u)?.[0] || "";
+      const bare = token.slice(leading.length, token.length - trailing.length || undefined);
+      return `${escapeHTML(leading)}<span class="blank" aria-label="hidden word">${escapeHTML(bare)}</span>${escapeHTML(trailing)}`;
+    }).join("");
+  }
+
+  function firstLetters(text) {
+    return text.replace(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu, word => word[0]).replace(/([.!?;:])(?=\S)/g, "$1 ");
+  }
+
+  function firstLettersHTML(challenge, p) {
+    if (p.chapterId === ROMANS_CHAPTER_ID && challenge.verseStart && challenge.verseEnd) {
+      const chunks = [];
+      for (let verse = challenge.verseStart; verse <= challenge.verseEnd; verse += 1) {
+        chunks.push(`<span class="verse-chunk"><sup class="verse-number">${verse}</sup>${escapeHTML(firstLetters(ROMANS_1_VERSES[verse]))}</span>`);
+      }
+      return chunks.join(" ");
+    }
+    return escapeHTML(firstLetters(challenge.text));
+  }
+
+  function bindReviewControls(p) {
+    document.getElementById("readyToGradeBtn")?.addEventListener("click", showGradePanel);
+    document.getElementById("revealBtn")?.addEventListener("click", () => revealPassage(p));
+    document.getElementById("compareBtn")?.addEventListener("click", () => compareTypedAnswer(p));
+    document.querySelectorAll(".grade-btn").forEach(btn => btn.addEventListener("click", () => gradeCurrent(Number(btn.dataset.rating))));
+  }
+
+  function showGradePanel() {
+    document.getElementById("gradePanel")?.classList.remove("hidden");
+    document.getElementById("gradePanel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function revealPassage(p) {
+    if (reviewSession.revealed) return;
+    reviewSession.revealed = true;
+    const prompt = document.querySelector(".memory-prompt");
+    if (prompt) prompt.innerHTML = `<div class="scripture">${scriptureHTML(reviewSession.challenge, p)}</div>`;
+    document.getElementById("revealBtn")?.classList.add("hidden");
+    showGradePanel();
+  }
+
+  function normalizeForCompare(text) {
+    let output = String(text).normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+    if (!state.settings.strictPunctuation) output = output.replace(/[^\p{L}\p{N}'’-]+/gu, " ").toLowerCase();
+    return output.trim().replace(/\s+/g, " ");
+  }
+
+  function compareTypedAnswer(p) {
+    const answer = document.getElementById("typingAnswer").value;
+    if (!answer.trim()) { toast("Type your attempt first"); return; }
+    reviewSession.typedCompared = true;
+    const expectedWords = normalizeForCompare(reviewSession.challenge.text).split(" ");
+    const answerWords = normalizeForCompare(answer).split(" ");
+    const max = Math.max(expectedWords.length, answerWords.length);
+    let matches = 0;
+    const output = [];
+    const missed = [];
+    for (let i = 0; i < max; i += 1) {
+      const expected = expectedWords[i];
+      const actual = answerWords[i];
+      if (expected && actual && expected === actual) {
+        matches += 1;
+        output.push(`<span class="diff-good">${escapeHTML(expected)}</span>`);
+      } else if (expected) {
+        output.push(`<span class="diff-bad" title="Your word: ${escapeHTML(actual || "missing")}">${escapeHTML(expected)}</span>`);
+        const key = normalizeWord(expected);
+        if (key.length >= 3) missed.push(key);
+      }
+    }
+    reviewSession.missedWords = missed;
+    const accuracy = Math.round(matches / Math.max(1, expectedWords.length) * 100);
+    document.getElementById("compareResult").innerHTML = `<div class="compare-box"><strong>${accuracy}% word-position match</strong><div class="help" style="margin:6px 0 12px">Red words were missing or different at that position. They will be prioritized in future cloze drills.</div><div class="scripture" style="font-size:1rem">${output.join(" ")}</div></div>`;
+    document.getElementById("compareBtn").classList.add("hidden");
+    showGradePanel();
+  }
+
+  function calculateSchedule(p, rating) {
+    const oldInterval = Math.max(0, p.interval || 0);
+    let interval = oldInterval;
+    let level = p.level;
+
+    if (p.level === 1) {
+      if (rating >= 3) { interval = 0; level = 2; }
+      else if (rating === 2) { interval = 0; level = 1; }
+      else if (rating === 1) { interval = 1; level = 1; }
+      else { interval = 0; level = 1; }
+      return { interval, level, dueDate: addDaysISO(interval) };
+    }
+
+    if (rating === 0) interval = 0;
+    else if (rating === 1) interval = 1;
+    else if (rating === 2) interval = 2;
+    else if (rating === 3) interval = Math.max(3, Math.round(oldInterval * 1.25) || 4);
+    else if (rating === 4) interval = Math.max(level * 2, Math.round(oldInterval * 1.8) || 7);
+    else interval = Math.max(level * 3, Math.round(oldInterval * 2.35) || 14);
+    interval = Math.min(interval, 365);
+
+    if (rating >= 4) level = Math.min(5, level + 1);
+    else if (rating <= 1) level = Math.max(1, level - 1);
+    else if (rating === 2 && level > 2) level -= 1;
+
+    return { interval, level, dueDate: addDaysISO(interval) };
+  }
+
+  function gradeCurrent(rating) {
+    const p = currentReviewPassage();
+    if (!p) return;
+    const challenge = reviewSession.challenge;
+    const before = { level: p.level, interval: p.interval };
+    const next = calculateSchedule(p, rating);
+    const reviewedAt = new Date().toISOString();
+    const qualifyingPass = rating >= 4 && before.level >= 2;
+    const fullRecitation = rating >= 4 && before.level === 5 && challenge.mode === "full";
+
+    p.level = next.level;
+    p.interval = next.interval;
+    p.dueDate = next.dueDate;
+    p.repetitions += 1;
+    if (rating <= 1) p.lapses += 1;
+    if (qualifyingPass) p.passes += 1;
+    if (fullRecitation) p.successfulRecitations += 1;
+    p.lastRating = rating;
+    p.updatedAt = reviewedAt;
+    reviewSession.missedWords.forEach(word => { p.troubleWords[word] = Number(p.troubleWords[word] || 0) + 1; });
+
+    const record = { reviewedAt, rating, challengeMode: challenge.mode, before, after: next };
+    p.reviewHistory.push(record);
+    if (p.reviewHistory.length > 250) p.reviewHistory = p.reviewHistory.slice(-250);
+    state.reviewLog.push({ passageId: p.id, reference: challenge.reference, ...record });
+    if (state.reviewLog.length > 7500) state.reviewLog = state.reviewLog.slice(-7500);
+
+    const newlyUnlocked = refreshUnlocks(state);
+    reviewSession.unlocked.push(...newlyUnlocked);
+    saveState();
+
+    reviewSession.completed += 1;
+    reviewSession.attemptCounts[p.id] = Number(reviewSession.attemptCounts[p.id] || 0) + 1;
+
+    const remainingIds = new Set(reviewSession.queue.slice(reviewSession.index + 1).map(item => item.id));
+    if (p.dueDate <= todayISO() && reviewSession.attemptCounts[p.id] < 2 && !remainingIds.has(p.id)) {
+      reviewSession.queue.push(p);
+      remainingIds.add(p.id);
+    }
+
+    newlyUnlocked.forEach(id => {
+      if (reviewSession.newItemsAdded >= state.settings.dailyNewLimit) return;
+      const unlocked = passageById(id);
+      if (unlocked && !remainingIds.has(unlocked.id)) {
+        reviewSession.queue.push(unlocked);
+        remainingIds.add(unlocked.id);
+        reviewSession.newItemsAdded += 1;
+      }
+    });
+
+    reviewSession.index += 1;
+    if (reviewSession.index >= reviewSession.queue.length) finishReview();
+    else renderReviewCard();
+  }
+
+  function finishReview() {
+    const completed = reviewSession?.completed || 0;
+    const unlockedItems = [...new Set(reviewSession?.unlocked || [])].map(id => passageById(id)).filter(Boolean);
+    const unlockedHTML = unlockedItems.length
+      ? `<div class="unlock-summary"><span>Newly unlocked</span>${unlockedItems.map(p => `<strong>${escapeHTML(p.reference)} · ${escapeHTML(p.title)}</strong>`).join("")}</div>`
+      : "";
+    reviewSession = null;
+    const container = document.getElementById("view-review");
+    container.innerHTML = `<div class="review-shell"><article class="review-card complete-card">
+      <div class="empty-mark">✓</div>
+      <h1><span class="illuminated-initial">R</span>eview complete</h1>
+      <p class="instruction">${completed} attempt${completed === 1 ? "" : "s"} completed. Accurate active recall advances the chapter path; durable mastery still requires spaced, full recitations.</p>
+      ${unlockedHTML}
+      <div class="review-actions"><button class="btn btn-primary" id="returnTodayBtn">Return to today</button><button class="btn btn-secondary" id="openTreeBtn">Open chapter tree</button></div>
+    </article></div>`;
+    document.getElementById("returnTodayBtn").addEventListener("click", () => { renderAll(); switchView("today"); });
+    document.getElementById("openTreeBtn").addEventListener("click", () => { renderAll(); switchView("library"); });
+  }
+
+  document.querySelectorAll(".nav-btn").forEach(btn => btn.addEventListener("click", () => switchView(btn.dataset.view)));
+  document.getElementById("quickAddBtn").addEventListener("click", () => switchView("add"));
+  document.querySelectorAll("[data-close-dialog]").forEach(btn => btn.addEventListener("click", () => document.getElementById(btn.dataset.closeDialog).close()));
+  document.getElementById("runImportBtn").addEventListener("click", importBackup);
+
+  applyTheme();
+  renderAll();
+
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.error));
+  }
+</script>
+</body>
+</html>
