@@ -1003,6 +1003,459 @@
       .review-shell::before, .review-shell::after { display: none; }
     }
 
+
+    /* High-contrast illuminated manuscript system — Safari-safe */
+    :root,
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #2a170b;
+      --surface: #f7ecd2;
+      --surface-2: #ead5aa;
+      --ink: #26170c;
+      --muted: #63492f;
+      --line: #b98d49;
+      --accent: #70400f;
+      --accent-strong: #482407;
+      --accent-soft: #e7cc98;
+      --gold: #9a6514;
+      --danger: #8c2f28;
+      --warning: #85520e;
+      --shadow: 0 18px 42px rgba(17, 8, 2, .24);
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #100905;
+      --surface: #28190f;
+      --surface-2: #392516;
+      --ink: #fff1d3;
+      --muted: #d5ba8f;
+      --line: #73502b;
+      --accent: #e1b568;
+      --accent-strong: #f4ce85;
+      --accent-soft: #4b3018;
+      --gold: #e8bd68;
+      --danger: #f0a296;
+      --warning: #efc47b;
+      --shadow: 0 20px 48px rgba(0, 0, 0, .42);
+    }
+
+    body,
+    :root[data-theme="light"] body {
+      background:
+        radial-gradient(circle at 50% -4%, rgba(207, 157, 72, .22), transparent 28%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 1px, transparent 1px 7px),
+        linear-gradient(180deg, #41270f 0%, #2a170b 42%, #180d07 100%);
+      color: var(--ink);
+    }
+
+    :root[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 50% -3%, rgba(211, 161, 80, .13), transparent 27%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.008) 0 1px, transparent 1px 8px),
+        linear-gradient(180deg, #24150b 0%, #130b06 54%, #090503 100%);
+    }
+
+    body::before { opacity: .07; mix-blend-mode: normal; }
+    body::after {
+      box-shadow: inset 0 0 0 1px rgba(229, 186, 104, .07), inset 0 0 150px rgba(0, 0, 0, .24);
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, #4c2c11 0%, #321b0b 100%);
+      color: #fff0d0;
+      border-bottom-color: rgba(230, 187, 105, .30);
+    }
+    :root[data-theme="dark"] .topbar { background: linear-gradient(180deg, #2b190d, #190e07); }
+    .brand-text strong { color: #fff3d6; }
+    .brand-text span { color: #ddc297; }
+    .icon-btn { color: #fff2d5; border-color: rgba(232, 194, 125, .38); background: rgba(255,255,255,.08); }
+
+    .hero-card,
+    .card,
+    .passage-card,
+    .review-card,
+    dialog,
+    .path-row,
+    .ladder-row,
+    .memory-prompt,
+    .compare-box,
+    .empty {
+      background: linear-gradient(180deg, #fbf1da 0%, #f2e1bd 100%);
+      border-color: #bd914e;
+      color: #26170c;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.72);
+    }
+
+    :root[data-theme="dark"] .hero-card,
+    :root[data-theme="dark"] .card,
+    :root[data-theme="dark"] .passage-card,
+    :root[data-theme="dark"] .review-card,
+    :root[data-theme="dark"] dialog,
+    :root[data-theme="dark"] .path-row,
+    :root[data-theme="dark"] .ladder-row,
+    :root[data-theme="dark"] .memory-prompt,
+    :root[data-theme="dark"] .compare-box,
+    :root[data-theme="dark"] .empty {
+      background: linear-gradient(180deg, #2d1d12 0%, #21140d 100%);
+      border-color: #6d4a29;
+      color: #fff1d3;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.045);
+    }
+
+    .hero-card::before,
+    .card::before,
+    .passage-card::before,
+    .review-card::before,
+    dialog::before,
+    .path-row::before,
+    .ladder-row::before,
+    .empty::before,
+    .memory-prompt::before,
+    .compare-box::before {
+      border-color: rgba(88, 48, 10, .23);
+    }
+    :root[data-theme="dark"] .hero-card::before,
+    :root[data-theme="dark"] .card::before,
+    :root[data-theme="dark"] .passage-card::before,
+    :root[data-theme="dark"] .review-card::before,
+    :root[data-theme="dark"] dialog::before,
+    :root[data-theme="dark"] .path-row::before,
+    :root[data-theme="dark"] .ladder-row::before,
+    :root[data-theme="dark"] .empty::before,
+    :root[data-theme="dark"] .memory-prompt::before,
+    :root[data-theme="dark"] .compare-box::before {
+      border-color: rgba(232, 188, 104, .16);
+    }
+
+    .hero h1,
+    .hero p,
+    .chapter-heading h2,
+    .chapter-heading p,
+    .chapter-library-head h1,
+    .chapter-library-head p,
+    .section-head h1,
+    .section-head h2,
+    .section-head p,
+    .argument-card h2,
+    .argument-step strong,
+    .argument-step p,
+    .unit-head h2,
+    .unit-head p,
+    .path-copy strong,
+    .path-copy span,
+    .passage-card h3,
+    .milestone-card h3,
+    .milestone-card p,
+    .setting-copy strong,
+    .setting-copy span,
+    .metric strong,
+    .metric span,
+    .reference,
+    .instruction,
+    .scripture,
+    .review-card,
+    .review-card p,
+    .review-card strong,
+    .help,
+    label,
+    .chapter-bar-label,
+    .meta,
+    .stat-row span,
+    .stat-row strong {
+      opacity: 1;
+    }
+
+    :root[data-theme="light"] .hero h1,
+    :root[data-theme="light"] .chapter-heading h2,
+    :root[data-theme="light"] .chapter-library-head h1,
+    :root[data-theme="light"] .section-head h1,
+    :root[data-theme="light"] .section-head h2,
+    :root[data-theme="light"] .argument-card h2,
+    :root[data-theme="light"] .unit-head h2,
+    :root[data-theme="light"] .path-copy strong,
+    :root[data-theme="light"] .passage-card h3,
+    :root[data-theme="light"] .milestone-card h3,
+    :root[data-theme="light"] .reference,
+    :root[data-theme="light"] .scripture,
+    :root[data-theme="light"] .setting-copy strong,
+    :root[data-theme="light"] label {
+      color: #26170c;
+    }
+
+    :root[data-theme="light"] .hero p,
+    :root[data-theme="light"] .chapter-heading p,
+    :root[data-theme="light"] .chapter-library-head p,
+    :root[data-theme="light"] .section-head p,
+    :root[data-theme="light"] .argument-step p,
+    :root[data-theme="light"] .unit-head p,
+    :root[data-theme="light"] .path-copy span,
+    :root[data-theme="light"] .milestone-card p,
+    :root[data-theme="light"] .instruction,
+    :root[data-theme="light"] .help,
+    :root[data-theme="light"] .meta,
+    :root[data-theme="light"] .setting-copy span,
+    :root[data-theme="light"] .metric span,
+    :root[data-theme="light"] .chapter-bar-label,
+    :root[data-theme="light"] .stat-row span {
+      color: #654a2f;
+    }
+
+    :root[data-theme="dark"] .hero h1,
+    :root[data-theme="dark"] .chapter-heading h2,
+    :root[data-theme="dark"] .chapter-library-head h1,
+    :root[data-theme="dark"] .section-head h1,
+    :root[data-theme="dark"] .section-head h2,
+    :root[data-theme="dark"] .argument-card h2,
+    :root[data-theme="dark"] .unit-head h2,
+    :root[data-theme="dark"] .path-copy strong,
+    :root[data-theme="dark"] .passage-card h3,
+    :root[data-theme="dark"] .milestone-card h3,
+    :root[data-theme="dark"] .reference,
+    :root[data-theme="dark"] .scripture,
+    :root[data-theme="dark"] .setting-copy strong,
+    :root[data-theme="dark"] label,
+    :root[data-theme="dark"] .review-card strong {
+      color: #fff1d3;
+    }
+
+    :root[data-theme="dark"] .hero p,
+    :root[data-theme="dark"] .chapter-heading p,
+    :root[data-theme="dark"] .chapter-library-head p,
+    :root[data-theme="dark"] .section-head p,
+    :root[data-theme="dark"] .argument-step p,
+    :root[data-theme="dark"] .unit-head p,
+    :root[data-theme="dark"] .path-copy span,
+    :root[data-theme="dark"] .milestone-card p,
+    :root[data-theme="dark"] .instruction,
+    :root[data-theme="dark"] .help,
+    :root[data-theme="dark"] .meta,
+    :root[data-theme="dark"] .setting-copy span,
+    :root[data-theme="dark"] .metric span,
+    :root[data-theme="dark"] .chapter-bar-label,
+    :root[data-theme="dark"] .stat-row span {
+      color: #d8bf98;
+    }
+
+    .eyebrow,
+    .unit-range,
+    .next-target span,
+    .scribe-banner .eyebrow {
+      color: #8c5810;
+      font-weight: 900;
+    }
+    :root[data-theme="dark"] .eyebrow,
+    :root[data-theme="dark"] .unit-range,
+    :root[data-theme="dark"] .next-target span,
+    :root[data-theme="dark"] .scribe-banner .eyebrow { color: #e6b85f; }
+
+    .illuminated-initial {
+      color: #fff4d4;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.18), transparent 28%),
+        linear-gradient(145deg, #8c2f24 0%, #6d1e1b 52%, #42110f 100%);
+      border: 2px solid #b9842c;
+      box-shadow: inset 0 0 0 2px rgba(255, 225, 151, .20), 0 2px 7px rgba(45,17,6,.18);
+      text-shadow: 0 1px 0 rgba(0,0,0,.25);
+    }
+
+    .stats-card,
+    :root[data-theme="dark"] .stats-card {
+      background:
+        radial-gradient(circle at top right, rgba(191, 137, 47, .20), transparent 28%),
+        linear-gradient(180deg, #4b2b10 0%, #2f190a 100%);
+      color: #fff1d3;
+      border-color: #8c632d;
+    }
+    .stats-card .stat-row span { color: #ddc59f !important; }
+    .stats-card .stat-row strong { color: #fff7e4 !important; }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #835018 0%, #5b310c 100%);
+      color: #fff7e5;
+      border: 1px solid #4b2608;
+      text-shadow: 0 1px 0 rgba(0,0,0,.18);
+    }
+    .btn-primary:hover { background: linear-gradient(180deg, #925d20, #673a10); }
+    .btn-secondary,
+    .btn-ghost {
+      background: linear-gradient(180deg, #f5e7c8, #e6cc99);
+      color: #321d0d;
+      border-color: #a97b38;
+    }
+    :root[data-theme="dark"] .btn-secondary,
+    :root[data-theme="dark"] .btn-ghost {
+      background: linear-gradient(180deg, #3b2616, #2b1a10);
+      color: #ffebc6;
+      border-color: #79542c;
+    }
+
+    .badge {
+      background: #ead4a7;
+      border-color: #a97b38;
+      color: #513419;
+    }
+    .badge-accent {
+      background: #dfbd78;
+      border-color: #9b6b27;
+      color: #3f250b;
+    }
+    :root[data-theme="dark"] .badge {
+      background: #3d2817;
+      border-color: #76512b;
+      color: #e6cca3;
+    }
+    :root[data-theme="dark"] .badge-accent {
+      background: #5b3a17;
+      border-color: #a87934;
+      color: #ffe4ad;
+    }
+
+    .flow-map,
+    .argument-step,
+    .next-target,
+    .unlock-summary {
+      background: #ead6ad;
+      color: #4a3017;
+      border-color: rgba(100, 59, 15, .22);
+    }
+    .flow-map span,
+    .next-target strong,
+    .argument-step strong { color: #2e1a0b; }
+    :root[data-theme="dark"] .flow-map,
+    :root[data-theme="dark"] .argument-step,
+    :root[data-theme="dark"] .next-target,
+    :root[data-theme="dark"] .unlock-summary {
+      background: #382416;
+      color: #dcc29b;
+      border-color: rgba(225, 181, 104, .17);
+    }
+    :root[data-theme="dark"] .flow-map span,
+    :root[data-theme="dark"] .next-target strong,
+    :root[data-theme="dark"] .argument-step strong { color: #fff0cf; }
+
+    .memory-prompt {
+      background: #f8edd4;
+      border-color: #ad7d3a;
+    }
+    :root[data-theme="dark"] .memory-prompt {
+      background: #24170f;
+      border-color: #684524;
+    }
+
+    .review-card {
+      background:
+        linear-gradient(90deg, transparent 0 68px, rgba(151, 88, 39, .15) 68px 70px, transparent 70px),
+        linear-gradient(180deg, #fbf1da 0%, #f0ddb7 100%);
+    }
+    :root[data-theme="dark"] .review-card {
+      background:
+        linear-gradient(90deg, transparent 0 68px, rgba(219, 164, 88, .12) 68px 70px, transparent 70px),
+        linear-gradient(180deg, #2d1d12 0%, #1e120c 100%);
+    }
+    .review-card::after { display: none; }
+    .scribe-banner { border-bottom-color: rgba(96, 57, 17, .28); }
+    :root[data-theme="dark"] .scribe-banner { border-bottom-color: rgba(226, 180, 98, .18); }
+    .scribe-banner strong { color: #26170c; }
+    :root[data-theme="dark"] .scribe-banner strong { color: #fff1d3; }
+
+    .scripture {
+      font-size: clamp(1.18rem, 4vw, 1.46rem);
+      font-weight: 500;
+      line-height: 1.82;
+      color: #24150a;
+      text-shadow: none;
+    }
+    :root[data-theme="dark"] .scripture { color: #fff0d0; }
+    .instruction {
+      font-size: 1rem;
+      color: #5f4328;
+    }
+    :root[data-theme="dark"] .instruction { color: #d9bf96; }
+    .reference { color: #2b1809; }
+    :root[data-theme="dark"] .reference { color: #ffedc5; }
+    .verse-number { color: #8a5311; }
+    :root[data-theme="dark"] .verse-number { color: #e3af51; }
+
+    .input,
+    textarea,
+    select {
+      background: #fff7e5;
+      color: #211308;
+      border-color: #a97b38;
+    }
+    .input::placeholder,
+    textarea::placeholder { color: #7d6447; opacity: 1; }
+    :root[data-theme="dark"] .input,
+    :root[data-theme="dark"] textarea,
+    :root[data-theme="dark"] select {
+      background: #1b100a;
+      color: #fff0d1;
+      border-color: #704a24;
+    }
+    :root[data-theme="dark"] .input::placeholder,
+    :root[data-theme="dark"] textarea::placeholder { color: #b69b76; }
+
+    .grade-btn {
+      background: #ead4a6;
+      color: #2a180a;
+      border-color: #a97b38;
+    }
+    .grade-btn span { color: #604329; }
+    :root[data-theme="dark"] .grade-btn {
+      background: #382316;
+      color: #fff0cf;
+      border-color: #76502a;
+    }
+    :root[data-theme="dark"] .grade-btn span { color: #d4b98e; }
+
+    .bottom-nav {
+      background: linear-gradient(180deg, #4b2b10, #2c1809);
+      border-color: rgba(231, 188, 105, .28);
+    }
+    :root[data-theme="dark"] .bottom-nav { background: linear-gradient(180deg, #27160b, #130a05); }
+    .nav-btn { color: #d7bd93; }
+    .nav-btn.active { color: #fff2d4; background: rgba(232, 190, 111, .15); }
+
+    .roman-scene {
+      background:
+        radial-gradient(circle at top right, rgba(142, 41, 32, .09), transparent 35%),
+        linear-gradient(180deg, #f8ecd1, #ead2a1);
+      border-color: #ad7c36;
+    }
+    :root[data-theme="dark"] .roman-scene {
+      background: linear-gradient(180deg, #362315, #24170f);
+      border-color: #704a25;
+    }
+
+    .codex-splash {
+      border-top: 5px solid #8d2d23;
+    }
+    .codex-splash::after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 8px;
+      height: 4px;
+      background: linear-gradient(90deg, #8d2d23 0 31%, #b7842d 31% 66%, #244e68 66% 100%);
+      border-radius: 999px;
+      opacity: .8;
+    }
+
+    @media (max-width: 720px) {
+      .review-card {
+        background:
+          linear-gradient(90deg, transparent 0 42px, rgba(151, 88, 39, .15) 42px 44px, transparent 44px),
+          linear-gradient(180deg, #fbf1da 0%, #f0ddb7 100%);
+      }
+      :root[data-theme="dark"] .review-card {
+        background:
+          linear-gradient(90deg, transparent 0 42px, rgba(219, 164, 88, .12) 42px 44px, transparent 44px),
+          linear-gradient(180deg, #2d1d12 0%, #1e120c 100%);
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1067,7 +1520,7 @@
   "use strict";
 
   const STORAGE_KEY = "scripture-memory-gauntlet.v1";
-  const APP_VERSION = 3;
+  const APP_VERSION = 4;
   const ROMANS_CHAPTER_ID = "romans-1";
 
   const LEVELS = {
@@ -1201,7 +1654,7 @@
     settings: {
       dailyNewLimit: 3,
       clozePercent: 35,
-      theme: "system",
+      theme: "light",
       strictPunctuation: false
     },
     meta: { seededChapters: [] },
@@ -1370,6 +1823,7 @@
     } catch (error) {
       console.error("Could not load saved data", error);
     }
+    if (Number(loaded.version || 0) < 4 && loaded.settings.theme === "system") loaded.settings.theme = "light";
     loaded.version = APP_VERSION;
     seedRomansChapter(loaded);
     refreshUnlocks(loaded);
@@ -1427,9 +1881,11 @@
   }
 
   function applyTheme() {
-    const theme = state.settings.theme;
-    if (theme === "system") document.documentElement.removeAttribute("data-theme");
-    else document.documentElement.setAttribute("data-theme", theme);
+    const preference = state.settings.theme || "light";
+    const resolved = preference === "system"
+      ? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : preference;
+    document.documentElement.setAttribute("data-theme", resolved);
   }
 
   function setSceneMode(isReview) {
@@ -1821,7 +2277,7 @@
     container.innerHTML = `
       <div class="section-head"><div><h1>Settings</h1><p>Adjust recall difficulty and protect your private library.</p></div></div>
       <section class="card">
-        <div class="setting-row"><div class="setting-copy"><strong>Appearance</strong><span>Use the device theme or force light/dark mode.</span></div><select class="setting-control" id="themeSetting"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+        <div class="setting-row"><div class="setting-copy"><strong>Appearance</strong><span>Choose bright parchment, a dark nocturne study, or follow the device.</span></div><select class="setting-control" id="themeSetting"><option value="light">Parchment</option><option value="dark">Nocturne</option><option value="system">Follow device</option></select></div>
         <div class="setting-row"><div class="setting-copy"><strong>Cloze difficulty</strong><span>Percentage of eligible words hidden. Recorded trouble words are hidden first.</span></div><select class="setting-control" id="clozeSetting"><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option></select></div>
         <div class="setting-row"><div class="setting-copy"><strong>New path items per session</strong><span>Limits newly unlocked material; due reviews are never hidden.</span></div><select class="setting-control" id="dailyNewSetting"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
         <div class="setting-row"><div class="setting-copy"><strong>Strict punctuation</strong><span>Include capitalization and punctuation when comparing typed recall.</span></div><input id="punctuationSetting" type="checkbox" /></div>
@@ -2276,6 +2732,9 @@
   document.getElementById("runImportBtn").addEventListener("click", importBackup);
 
   applyTheme();
+  window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", () => {
+    if (state.settings.theme === "system") applyTheme();
+  });
   renderAll();
 
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {

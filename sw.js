@@ -1,4 +1,4 @@
-const CACHE_NAME = "scripture-memory-codex-deluxe-v1-romans-1";
+const CACHE_NAME = "scripture-memory-codex-illuminated-v1";
 const APP_SHELL = [
   "./",
   "./index.html",

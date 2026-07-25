@@ -1,3 +1,7 @@
+Scripture Memory Codex — Illuminated Edition
+
+High-contrast redesign for iPhone Safari. Includes explicit Parchment and Nocturne palettes, illuminated styling, Romans artwork, and immersive Scriptorium review mode.
+
 Scripture Memory Codex Deluxe
 
 Enhanced ancient-textbook edition with Romans artwork, illuminated initials, upgraded icons, and immersive review mode.

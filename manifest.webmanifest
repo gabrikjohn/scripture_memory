@@ -1,12 +1,12 @@
 {
-  "name": "Scripture Memory Codex Deluxe",
-  "short_name": "Codex Deluxe",
-  "description": "A private, offline-first Scripture memory app with illuminated codex artwork, immersive review mode, and a guided Romans 1 mastery path.",
+  "name": "Scripture Memory Codex \u2014 Illuminated Edition",
+  "short_name": "Memory Codex",
+  "description": "A private, offline-first Scripture memory app with a high-contrast illuminated manuscript design and guided Romans 1 mastery path.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#efe2c3",
-  "theme_color": "#5a3c15",
+  "background_color": "#2a170b",
+  "theme_color": "#321b0b",
   "icons": [
     {
       "src": "icon-192.png",
