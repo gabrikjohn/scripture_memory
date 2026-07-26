@@ -11,9 +11,7 @@ on the current device and works offline after the first successful load.
 
 ## Privacy and text rights
 
-This private copy contains Scripture text supplied under the owner's personal-use
-permission. Do not publish, redistribute, enable public Pages hosting, or change
-the repository visibility to public.
+Do not publish or redistribute.
 
 ## Artwork
 
