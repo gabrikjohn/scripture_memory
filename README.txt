@@ -31,11 +31,7 @@ ROMANS 1 LEARNING PATH
 
 PRIVACY AND PERMITTED USE
 - The populated app contains Legacy Standard Bible text supplied by the user.
-- It is intended only for Gabriel Anderson's authorized personal Scripture-memory use.
-- Do not distribute, publish, sell, share, or publicly host this populated copy.
-- Passage text and review progress remain in the browser's localStorage.
-- No account, analytics service, database, or external JavaScript library is used.
-- Exported backups contain the full Scripture text and must remain private.
+- Do not distribute, publish, sell, or share this populated copy.
 
 FASTEST WAY TO TEST ON A COMPUTER
 1. Extract the ZIP.
