@@ -1,12 +1,8 @@
-Scripture Memory Codex — Illuminated Edition
+Scripture Memory Codex — Masterwork Edition
 
-High-contrast redesign for iPhone Safari. Includes explicit Parchment and Nocturne palettes, illuminated styling, Romans artwork, and immersive Scriptorium review mode.
-
-Scripture Memory Codex Deluxe
-
-Enhanced ancient-textbook edition with Romans artwork, illuminated initials, upgraded icons, and immersive review mode.
-
-Scripture Memory Codex
+Fully art-directed ancient-textbook edition with bespoke Romans hero art,
+illuminated folio surfaces, generated medallions, a scriptorium review
+environment, upgraded icons, and high-contrast Parchment and Nocturne palettes.
 
 SCRIPTURE MEMORY GAUNTLET — ROMANS 1 EDITION
 
@@ -15,6 +11,11 @@ WHAT IS INCLUDED
 - manifest.webmanifest: installable PWA metadata
 - sw.js: offline caching
 - icon-192.png / icon-512.png: app icons
+- assets/romans-hero.webp: Romans hero and chapter artwork
+- assets/scriptorium-desk.webp: immersive review environment
+- assets/folio-frame.webp: outer frame and vellum texture
+- assets/roman-medallion.webp: mastery medallions and seals
+- assets/codex-emblem.webp: in-app emblem
 
 ROMANS 1 LEARNING PATH
 - Seven thought-units based on the chapter's argument
