@@ -7,8 +7,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Memory Codex" />
+  <meta name="description" content="A private, offline-first Scripture memory app with a guided Romans 1 mastery path and a fully art-directed illuminated manuscript design." />
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="preload" href="assets/romans-hero.webp" as="image" type="image/webp" />
   <title>Scripture Memory Codex</title>
   <style>
     :root {
@@ -1456,13 +1459,359 @@
       }
     }
 
+    /* Option B — fully art-directed illuminated manuscript experience */
+    body,
+    :root[data-theme="light"] body {
+      background:
+        radial-gradient(circle at 50% -12%, rgba(219, 167, 73, .34), transparent 30%),
+        linear-gradient(180deg, rgba(52, 27, 10, .86), rgba(20, 9, 4, .96)),
+        url("assets/folio-frame.webp") center top / min(1180px, 100vw) auto repeat-y,
+        #211006;
+      background-attachment: fixed;
+    }
+
+    :root[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 50% -10%, rgba(204, 148, 59, .19), transparent 28%),
+        linear-gradient(180deg, rgba(24, 12, 6, .90), rgba(6, 3, 2, .98)),
+        url("assets/folio-frame.webp") center top / min(1180px, 100vw) auto repeat-y,
+        #090402;
+      background-attachment: fixed;
+    }
+
+    body::before {
+      opacity: .12;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.34), transparent 15% 85%, rgba(0,0,0,.34)),
+        url("assets/folio-frame.webp") center top / min(1180px, 100vw) auto repeat-y;
+      mix-blend-mode: screen;
+    }
+
+    body::after {
+      box-shadow:
+        inset 0 0 0 1px rgba(239, 198, 113, .12),
+        inset 0 0 110px rgba(0, 0, 0, .52);
+    }
+
+    main {
+      width: min(1120px, 100%);
+      padding-top: 26px;
+    }
+
+    .topbar {
+      background:
+        linear-gradient(90deg, rgba(41, 17, 7, .98), rgba(74, 35, 13, .88), rgba(29, 12, 6, .98)),
+        url("assets/romans-hero.webp") center 54% / cover;
+      border-bottom: 1px solid rgba(238, 196, 108, .42);
+      box-shadow: 0 14px 34px rgba(9, 3, 1, .38), inset 0 -1px 0 rgba(255, 230, 170, .08);
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid #b88737;
+      background: #241207;
+      border-radius: 13px;
+      box-shadow: 0 7px 18px rgba(0,0,0,.34), inset 0 0 0 1px rgba(255,231,171,.18);
+    }
+
+    .brand-mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero {
+      grid-template-columns: minmax(0, 1.55fr) minmax(250px, .65fr);
+      gap: 16px;
+    }
+
+    .hero .hero-card:first-child {
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: clamp(24px, 5vw, 42px);
+      background:
+        linear-gradient(90deg, rgba(25, 10, 4, .96) 0%, rgba(32, 13, 5, .83) 40%, rgba(36, 14, 5, .18) 76%),
+        linear-gradient(0deg, rgba(19, 7, 3, .78), transparent 56%),
+        url("assets/romans-hero.webp") 58% center / cover;
+      border-color: #9f7132;
+      box-shadow: 0 20px 46px rgba(10, 4, 1, .42), inset 0 0 0 1px rgba(255,226,159,.12);
+    }
+
+    .hero .hero-card:first-child::before {
+      border-color: rgba(239, 199, 112, .34);
+    }
+
+    .hero .hero-card:first-child::after {
+      display: none;
+    }
+
+    .hero .hero-card:first-child h1 {
+      color: #fff3d3 !important;
+      max-width: 12ch;
+      font-size: clamp(2.15rem, 5.5vw, 3.5rem);
+      line-height: .98;
+      text-shadow: 0 3px 18px rgba(0,0,0,.74);
+    }
+
+    .hero .hero-card:first-child p {
+      color: #ead5ad !important;
+      max-width: 46ch;
+      text-shadow: 0 2px 8px rgba(0,0,0,.78);
+    }
+
+    .hero .hero-card:first-child .eyebrow {
+      color: #e8bd66;
+      text-shadow: 0 1px 8px rgba(0,0,0,.78);
+    }
+
+    .hero .hero-card:first-child .btn-secondary {
+      background: rgba(247, 229, 191, .92);
+      border-color: rgba(255, 225, 157, .75);
+    }
+
+    .stats-card {
+      background:
+        linear-gradient(180deg, rgba(62, 28, 10, .90), rgba(30, 12, 5, .97)),
+        url("assets/roman-medallion.webp") center 40% / cover !important;
+      border-color: #91642b;
+    }
+
+    .codex-splash {
+      grid-template-columns: minmax(260px, .76fr) minmax(360px, 1.24fr);
+      gap: clamp(20px, 4vw, 42px);
+      padding: clamp(22px, 4vw, 38px);
+      background:
+        linear-gradient(90deg, rgba(251, 241, 216, .98), rgba(239, 218, 177, .93)),
+        url("assets/folio-frame.webp") center / cover !important;
+    }
+
+    :root[data-theme="dark"] .codex-splash {
+      background:
+        linear-gradient(90deg, rgba(42, 25, 14, .97), rgba(28, 16, 10, .94)),
+        url("assets/folio-frame.webp") center / cover !important;
+    }
+
+    .roman-scene {
+      padding: 0;
+      overflow: hidden;
+      background: #2b1408;
+      box-shadow:
+        0 16px 34px rgba(38, 15, 4, .28),
+        inset 0 0 0 1px rgba(255,225,162,.18);
+    }
+
+    .roman-scene img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .roman-scene.compact {
+      max-width: 390px;
+      transform: rotate(.4deg);
+      border-width: 2px;
+    }
+
+    .roman-scene.compact img {
+      aspect-ratio: 16 / 8.8;
+      object-position: 62% center;
+    }
+
+    .chapter-hero,
+    .unit-card,
+    .argument-card {
+      background:
+        linear-gradient(180deg, rgba(251, 241, 217, .965), rgba(238, 216, 175, .96)),
+        url("assets/folio-frame.webp") center / cover !important;
+    }
+
+    :root[data-theme="dark"] .chapter-hero,
+    :root[data-theme="dark"] .unit-card,
+    :root[data-theme="dark"] .argument-card {
+      background:
+        linear-gradient(180deg, rgba(43, 26, 15, .97), rgba(29, 17, 10, .97)),
+        url("assets/folio-frame.webp") center / cover !important;
+    }
+
+    .argument-step > span,
+    .milestone-icon {
+      background:
+        linear-gradient(rgba(246, 222, 177, .22), rgba(246, 222, 177, .22)),
+        url("assets/roman-medallion.webp") center / cover !important;
+      color: #321806 !important;
+      border-color: #9a6825 !important;
+      text-shadow: 0 1px 0 rgba(255,255,255,.6);
+      box-shadow: 0 5px 12px rgba(64, 30, 8, .22);
+    }
+
+    .argument-step > span {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      font-weight: 900;
+    }
+
+    .argument-step {
+      grid-template-columns: 38px 1fr;
+      align-items: center;
+    }
+
+    .milestone-icon {
+      border-radius: 50%;
+      width: 54px;
+      height: 54px;
+    }
+
+    body.review-mode,
+    :root[data-theme="light"] body.review-mode,
+    :root[data-theme="dark"] body.review-mode {
+      background:
+        linear-gradient(180deg, rgba(18, 7, 3, .54), rgba(9, 3, 1, .76)),
+        url("assets/scriptorium-desk.webp") center / cover fixed,
+        #120703;
+    }
+
+    body.review-mode main {
+      width: min(1180px, 100%);
+    }
+
+    .review-shell {
+      max-width: 1080px;
+      padding: clamp(24px, 6vw, 84px);
+      border: 1px solid rgba(219, 170, 79, .66);
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(40, 16, 6, .12), rgba(22, 8, 3, .42)),
+        url("assets/scriptorium-desk.webp") center / cover;
+      box-shadow:
+        0 30px 70px rgba(0,0,0,.55),
+        inset 0 0 0 7px rgba(50, 21, 7, .48),
+        inset 0 0 0 8px rgba(227, 182, 92, .24);
+    }
+
+    .review-shell .review-head {
+      max-width: 790px;
+      margin: 0 auto 16px;
+      padding: 10px 12px;
+      border: 1px solid rgba(229, 184, 95, .32);
+      border-radius: 16px;
+      color: #f8e7c5;
+      background: rgba(37, 15, 6, .82);
+      backdrop-filter: blur(10px);
+    }
+
+    .review-shell .review-head .chapter-bar-label {
+      color: #ead4a9 !important;
+    }
+
+    .review-shell .review-card {
+      max-width: 790px;
+      margin: 0 auto;
+      border-width: 2px;
+      box-shadow:
+        0 18px 44px rgba(17, 6, 2, .40),
+        inset 0 0 0 1px rgba(255,255,255,.46);
+    }
+
+    .scribe-banner-icons {
+      padding: 7px 10px;
+      border: 1px solid rgba(143, 92, 24, .24);
+      border-radius: 999px;
+      background: rgba(150, 98, 31, .08);
+    }
+
+    .bottom-nav {
+      background:
+        linear-gradient(180deg, rgba(70, 32, 11, .96), rgba(25, 10, 4, .99)),
+        url("assets/folio-frame.webp") center bottom / cover;
+      border-top-color: rgba(234, 191, 101, .34);
+    }
+
+    @media (max-width: 780px) {
+      body,
+      :root[data-theme="light"] body,
+      :root[data-theme="dark"] body {
+        background-size: auto, auto, 860px auto, auto;
+      }
+
+      main {
+        padding-inline: 12px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero .hero-card:first-child {
+        min-height: 390px;
+        background:
+          linear-gradient(0deg, rgba(20, 7, 3, .94) 0%, rgba(25, 9, 3, .50) 56%, rgba(25, 9, 3, .08) 100%),
+          url("assets/romans-hero.webp") 66% center / cover;
+      }
+
+      .hero .hero-card:first-child h1 {
+        max-width: 14ch;
+      }
+
+      .codex-splash {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+
+      .roman-scene.compact {
+        max-width: none;
+        transform: none;
+      }
+
+      .review-shell {
+        padding: 12px;
+        border-radius: 22px;
+        background-position: center top;
+      }
+
+      .review-shell .review-card {
+        min-height: 510px;
+      }
+
+      .review-shell .review-head {
+        margin-bottom: 10px;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .brand-text span { display: none; }
+      .brand-text strong { font-size: .86rem; letter-spacing: .035em; }
+      .hero .hero-card:first-child { min-height: 420px; }
+      .review-shell { margin-inline: -4px; padding: 8px; }
+      .review-shell .review-card { border-radius: 18px; padding-inline: 20px; }
+      .scribe-banner-icons span:nth-child(2) { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
   </style>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">SM</div>
+        <div class="brand-mark" aria-hidden="true"><img src="assets/codex-emblem.webp" alt="" width="46" height="46" /></div>
         <div class="brand-text">
           <strong>Scripture Memory Codex</strong>
           <span>An illuminated place for deep recall.</span>
@@ -1703,38 +2052,7 @@
 
   function romanSceneHTML(compact = false) {
     return `<div class="roman-scene ${compact ? "compact" : ""}" aria-hidden="true">
-      <svg viewBox="0 0 420 230" role="presentation" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="skyGrad" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="rgba(255,244,216,.95)" />
-            <stop offset="100%" stop-color="rgba(227,191,126,.28)" />
-          </linearGradient>
-          <linearGradient id="roadGrad" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="#b1864b" />
-            <stop offset="100%" stop-color="#7d5a2e" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="420" height="230" rx="24" fill="url(#skyGrad)" opacity=".72"/>
-        <circle cx="335" cy="50" r="28" fill="#dcb46b" opacity=".42"/>
-        <path d="M18 190c34-18 62-22 97-12 28 8 58 10 90-2 36-13 58-13 98 1 24 8 60 10 99-10v40H18z" fill="#a58149" opacity=".3"/>
-        <path d="M184 228c8-54 20-93 32-114 14 20 25 60 31 114z" fill="url(#roadGrad)" opacity=".88"/>
-        <path d="M196 228c5-48 12-80 20-98 10 18 17 50 22 98z" fill="#d2b27c" opacity=".3"/>
-        <g transform="translate(132 61)">
-          <rect x="0" y="48" width="162" height="8" rx="3" fill="#8d6732" opacity=".95"/>
-          <polygon points="6,48 81,4 156,48" fill="#8a632d" opacity=".95"/>
-          <rect x="17" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
-          <rect x="50" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
-          <rect x="84" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
-          <rect x="117" y="56" width="16" height="72" rx="2" fill="#e7d3ae" stroke="#9d753c" stroke-opacity=".4"/>
-        </g>
-        <g transform="translate(32 20)" stroke="#8f6b34" stroke-width="3" stroke-linecap="round" fill="none" opacity=".35">
-          <path d="M45 155c-28-11-38-29-35-50 4-24 18-35 38-42"/>
-          <path d="M54 150c-24-8-33-24-31-44 2-19 14-31 31-36"/>
-          <path d="M365 155c28-11 38-29 35-50-4-24-18-35-38-42"/>
-          <path d="M356 150c24-8 33-24 31-44-2-19-14-31-31-36"/>
-        </g>
-        <circle cx="210" cy="34" r="8" fill="#b98b41" opacity=".28"/>
-      </svg>
+      <img src="assets/romans-hero.webp" alt="" width="1672" height="941" loading="${compact ? "lazy" : "eager"}" decoding="async" />
     </div>`;
   }
 
@@ -2468,7 +2786,7 @@
         <article class="review-card">
           <div class="scribe-banner">
             <div><span class="eyebrow">Scriptorium</span><strong>${escapeHTML(p.reference)}</strong></div>
-            <div class="scribe-banner-icons"><span>✒︎</span><span>☉</span><span>⌘</span></div>
+            <div class="scribe-banner-icons" aria-hidden="true"><span>✒︎</span><span>☉</span><span>❧</span></div>
           </div>
           <div class="review-stage"><span class="badge badge-accent">Level ${p.level} · ${escapeHTML(LEVELS[p.level].name)}</span><span class="badge">${escapeHTML(reviewSession.challenge.label)}</span></div>
           ${reviewContentHTML(p, reviewSession.challenge)}

@@ -1,10 +1,15 @@
-const CACHE_NAME = "scripture-memory-codex-illuminated-v1";
+const CACHE_NAME = "scripture-memory-codex-masterwork-art-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./assets/codex-emblem.webp",
+  "./assets/folio-frame.webp",
+  "./assets/roman-medallion.webp",
+  "./assets/romans-hero.webp",
+  "./assets/scriptorium-desk.webp"
 ];
 
 self.addEventListener("install", event => {
